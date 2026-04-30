@@ -1,6 +1,8 @@
 #![warn(clippy::all, clippy::pedantic)]
+use bevy::dev_tools::picking_debug::{DebugPickingMode, DebugPickingPlugin};
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
+
 
 mod pieces;
 use pieces::*;
@@ -22,13 +24,26 @@ fn main() {
             }),
             ..Default::default()
         }))
+        .add_plugins((MeshPickingPlugin, DebugPickingPlugin))
+        .insert_resource(DebugPickingMode::Normal)
+        .add_systems(
+            PreUpdate,
+            (|mut mode: ResMut<DebugPickingMode>| {
+                *mode = match *mode {
+                    DebugPickingMode::Disabled => DebugPickingMode::Normal,
+                    DebugPickingMode::Normal => DebugPickingMode::Noisy,
+                    DebugPickingMode::Noisy => DebugPickingMode::Disabled,
+                }
+            })
+            .distributive_run_if(bevy::input::common_conditions::input_just_pressed(
+                KeyCode::F3,
+            )),
+        )
         .run();
 }
 
 
-fn setup(
-    mut commands: Commands
-) {
+fn setup(mut commands: Commands,) {
     commands
         .spawn((
             Camera3d::default(),
@@ -43,9 +58,10 @@ fn setup(
                     // around this axis (should be normalized)
                 Quat::from_xyzw(-0.3, -0.5, -0.3, 0.5).normalize(), 
                 Vec3::new(-7.0, 20.0, 4.0)
-            ))
+            )),
     ));
 
+    // raycast.cast_ray(ray, settings)
 
     commands.spawn((
         DirectionalLight {
@@ -81,12 +97,14 @@ fn create_board(
                     Mesh3d(mesh.clone()),
                     MeshMaterial3d(white_material.clone()),
                     Transform::from_translation(Vec3::new(i as f32, 0.0, j as f32)),
+                    Pickable::default()
                 ));
             } else {
                 commands.spawn((
                     Mesh3d(mesh.clone()),
                     MeshMaterial3d(black_material.clone()),
                     Transform::from_translation(Vec3::new(i as f32, 0.0, j as f32)),
+                    Pickable::default()
                 ));
             }
         }

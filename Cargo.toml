@@ -4,5 +4,4 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy = "0.18.1"
-bevy_mod_picking = "0.20.1"
+bevy = {version = "0.18.1", features = ["bevy_dev_tools", "mesh_picking"]}

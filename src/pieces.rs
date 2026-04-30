@@ -38,18 +38,16 @@ pub fn spawn_knight(
     position: Vec3,
     rotate: bool
 ) {
-    let rotation = if rotate {
-        0.0
-    } else {
-        1.0
-    };
-
     commands
         .spawn(
             Transform::from_translation(position)
                 .with_rotation(
-                    Quat::from_xyzw(0.0, 1.0, 0.0, rotation)
-                        .normalize()
+                    if rotate {
+                        Quat::from_xyzw(0.0, 1.0, 0.0, 0.0)
+                            .normalize()
+                    } else {
+                        Quat::from_xyzw(0.0, 0.0, 0.0, 0.0)
+                    }
                 )
         )
         .with_children(|parent| {
