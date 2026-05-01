@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 
-pub fn spawn_king(
+fn spawn_king(
     mut commands: Commands,
     material: Handle<StandardMaterial>,
     mesh: Handle<Mesh>,
@@ -30,7 +30,7 @@ pub fn spawn_king(
 }
 
 
-pub fn spawn_knight(
+fn spawn_knight(
     mut commands: Commands,
     material: Handle<StandardMaterial>,
     mesh_1: Handle<Mesh>,
@@ -66,7 +66,7 @@ pub fn spawn_knight(
         });
 }
 
-pub fn spawn_queen(
+fn spawn_queen(
     mut commands: Commands,
     material: Handle<StandardMaterial>,
     mesh: Handle<Mesh>,
@@ -87,7 +87,7 @@ pub fn spawn_queen(
 }
 
 
-pub fn spawn_bishop(
+fn spawn_bishop(
     mut commands: Commands,
     mesh: Handle<Mesh>,
     material: Handle<StandardMaterial>,
@@ -108,7 +108,7 @@ pub fn spawn_bishop(
         });
 }
 
-pub fn spawn_rook(
+fn spawn_rook(
     mut commands: Commands,
     mesh: Handle<Mesh>,
     material: Handle<StandardMaterial>,
@@ -129,7 +129,7 @@ pub fn spawn_rook(
         });
 }
 
-pub fn spawn_pawn(
+fn spawn_pawn(
     mut commands: Commands,
     mesh: Handle<Mesh>,
     material: Handle<StandardMaterial>,
@@ -148,4 +148,161 @@ pub fn spawn_pawn(
                 ).with_scale(vec3(0.2, 0.2, 0.2))
             ));
         });
+}
+
+
+pub fn create_pieces(
+    mut commands: Commands,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+    asset_server: Res<AssetServer>
+) {
+    let king_handle: Handle<Mesh> = 
+        asset_server.load("models/pieces.glb#Mesh0/Primitive0");
+    let king_cross_handle: Handle<Mesh> = 
+        asset_server.load("models/pieces.glb#Mesh1/Primitive0");
+    let pawn_handle: Handle<Mesh> = 
+        asset_server.load("models/pieces.glb#Mesh2/Primitive0");
+    let knight_1_handle: Handle<Mesh> = 
+        asset_server.load("models/pieces.glb#Mesh3/Primitive0");
+    let knight_2_handle: Handle<Mesh> =
+            asset_server.load("models/pieces.glb#Mesh4/Primitive0");
+    let rook_handle: Handle<Mesh> =
+            asset_server.load("models/pieces.glb#Mesh5/Primitive0");
+    let bishop_handle: Handle<Mesh> =
+            asset_server.load("models/pieces.glb#Mesh6/Primitive0");
+    let queen_handle: Handle<Mesh> =
+            asset_server.load("models/pieces.glb#Mesh7/Primitive0");
+
+    let white_material = materials.add(
+        Color::linear_rgb(1.0, 0.9, 0.9));
+
+    let black_material = materials.add(
+        Color::linear_rgb(0.0, 0.1, 0.1)
+    );
+
+    spawn_rook(
+        commands.reborrow(), 
+        rook_handle.clone(), 
+        white_material.clone(), 
+        vec3(0.0, 0.0, 0.0)
+    );
+    spawn_knight(
+        commands.reborrow(), 
+        white_material.clone(), 
+        knight_1_handle.clone(),
+        knight_2_handle.clone(),
+        vec3(0.0, 0.0, 1.0),
+        false
+    );
+    spawn_bishop(
+        commands.reborrow(), 
+        bishop_handle.clone(), 
+        white_material.clone(), 
+        vec3(0.0, 0.0, 2.0)
+    );
+    spawn_queen(
+        commands.reborrow(), 
+        white_material.clone(), 
+        queen_handle.clone(), 
+        vec3(0.0, 0.0, 3.0)
+    );
+    spawn_king(
+        commands.reborrow(), 
+        white_material.clone(), 
+        king_handle.clone(), 
+        king_cross_handle.clone(), 
+        Vec3::new(0.0, 0.0, 4.0)
+    );
+    spawn_bishop(
+        commands.reborrow(), 
+        bishop_handle.clone(), 
+        white_material.clone(), 
+        vec3(0.0, 0.0, 5.0)
+    );
+    spawn_knight(
+        commands.reborrow(), 
+        white_material.clone(), 
+        knight_1_handle.clone(),
+        knight_2_handle.clone(),
+        vec3(0.0, 0.0, 6.0),
+        false
+    );
+    spawn_rook(
+        commands.reborrow(), 
+        rook_handle.clone(), 
+        white_material.clone(), 
+        vec3(0.0, 0.0, 7.0)
+    );
+
+    for i in 0..8 {
+        spawn_pawn(
+            commands.reborrow(), 
+            pawn_handle.clone(), 
+            white_material.clone(), 
+            vec3(1., 0., i as f32)
+        );
+    }
+
+    spawn_rook(
+        commands.reborrow(),
+        rook_handle.clone(),
+        black_material.clone(),
+        Vec3::new(7., 0., 0.),
+    );
+    spawn_knight(
+        commands.reborrow(),
+        black_material.clone(),
+        knight_1_handle.clone(),
+        knight_2_handle.clone(),
+        Vec3::new(7., 0., 1.),
+        true
+    );
+    spawn_bishop(
+        commands.reborrow(),
+        bishop_handle.clone(),
+        black_material.clone(),
+        Vec3::new(7., 0., 2.),
+    );
+    spawn_queen(
+        commands.reborrow(),
+        black_material.clone(),
+        queen_handle.clone(),
+        Vec3::new(7., 0., 3.),
+    );
+    spawn_king(
+        commands.reborrow(),
+        black_material.clone(),
+        king_handle.clone(),
+        king_cross_handle.clone(),
+        Vec3::new(7., 0., 4.),
+    );
+    spawn_bishop(
+        commands.reborrow(),
+        bishop_handle.clone(),
+        black_material.clone(),
+        Vec3::new(7., 0., 5.),
+    );
+    spawn_knight(
+        commands.reborrow(),
+        black_material.clone(),
+        knight_1_handle.clone(),
+        knight_2_handle.clone(),
+        Vec3::new(7., 0., 6.),
+        true
+    );
+    spawn_rook(
+        commands.reborrow(),
+        rook_handle.clone(),
+        black_material.clone(),
+        Vec3::new(7., 0., 7.),
+    );
+
+    for i in 0..8 {
+        spawn_pawn(
+            commands.reborrow(),
+            pawn_handle.clone(),
+            black_material.clone(),
+            Vec3::new(6., 0., i as f32),
+        );
+    }
 }
