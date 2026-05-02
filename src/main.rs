@@ -12,8 +12,6 @@ use pieces::*;
 fn main() {
     App::new()
         .add_systems(Startup, setup)
-        .add_systems(Startup, create_board)
-        .add_systems(Startup, create_pieces)
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 resolution: WindowResolution::new(
@@ -26,6 +24,8 @@ fn main() {
             ..Default::default()
         }))
         .add_plugins((MeshPickingPlugin, DebugPickingPlugin))
+        .add_plugins(SquarePlugin)
+        .add_plugins(PiecePlugin)
         .insert_resource(DebugPickingMode::Normal)
         .add_systems(
             PreUpdate,

@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::board::SelectedPiece;
+
 #[derive(Clone, Copy, PartialEq)]
 pub enum PieceColor {
     White,
@@ -22,6 +24,15 @@ pub struct Piece {
     // current position
     pub x: u8,
     pub y: u8
+}
+
+pub struct PiecePlugin;
+impl Plugin for PiecePlugin {
+    fn build(&self, app: &mut App) {
+        app.init_resource::<SelectedPiece>()
+            .add_systems(Startup, create_pieces)
+            .add_systems(Update, move_pieces);
+    }
 }
 
 
@@ -50,14 +61,16 @@ fn spawn_king(
                 Mesh3d(mesh.clone()),
                 MeshMaterial3d(material.clone()),
                 Transform::from_translation(Vec3::new(-0.2, 0.0, -1.9))
-                    .with_scale(Vec3::new(0.2, 0.2, 0.2))
+                    .with_scale(Vec3::new(0.2, 0.2, 0.2)),
+                Pickable::IGNORE
             ));
 
             parent.spawn((
                 Mesh3d(mesh_cross.clone()),
                 MeshMaterial3d(material.clone()),
                 Transform::from_translation(Vec3::new(-0.2, 0.0, -1.9))
-                    .with_scale(Vec3::new(0.2, 0.2, 0.2))
+                    .with_scale(Vec3::new(0.2, 0.2, 0.2)),
+                Pickable::IGNORE
             ));
         });
 }
@@ -75,7 +88,7 @@ fn spawn_knight(
     commands
         .spawn((
             Transform::from_translation(
-                vec3(position.0 as f32, 0.0, position.1 as f32)
+                vec3(position.0 as f32, 0.0, position.1 as f32),
             )
                 .with_rotation(
                     if rotate {
@@ -91,19 +104,22 @@ fn spawn_knight(
                     x: position.0,
                     y: position.1
                 },
+                Pickable::IGNORE
             ))
         .with_children(|parent| {
             parent.spawn((
                 Mesh3d(mesh_1),
                 MeshMaterial3d(material.clone()),
                 Transform::from_translation(vec3(-0.2, 0.0, 0.9))
-                    .with_scale(vec3(0.2, 0.2, 0.2))
+                    .with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE
             ));
             parent.spawn((
                 Mesh3d(mesh_2),
                 MeshMaterial3d(material.clone()),
                 Transform::from_translation(vec3(-0.2, 0.0, 0.9))
-                    .with_scale(vec3(0.2, 0.2, 0.2))
+                    .with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE
             ));
         });
 }
@@ -132,11 +148,11 @@ fn spawn_queen(
                 Mesh3d(mesh),
                 MeshMaterial3d(material),
                 Transform::from_translation(vec3(-0.2, 0.0, -0.95))
-                    .with_scale(vec3(0.2, 0.2, 0.2))
+                    .with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE
             ));
         });
 }
-
 
 fn spawn_bishop(
     mut commands: Commands,
@@ -163,7 +179,8 @@ fn spawn_bishop(
                 MeshMaterial3d(material),
                 Transform::from_translation(
                     vec3(-0.1, 0.0, 0.0)
-                ).with_scale(vec3(0.2, 0.2, 0.2))
+                ).with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE
             ));
         });
 }
@@ -193,7 +210,8 @@ fn spawn_rook(
                 MeshMaterial3d(material),
                 Transform::from_translation(
                     vec3(-0.1, 0.0, 1.9)
-                ).with_scale(vec3(0.2, 0.2, 0.2))
+                ).with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE
             ));
         });
 }
@@ -223,7 +241,8 @@ fn spawn_pawn(
                 MeshMaterial3d(material),
                 Transform::from_translation(
                     vec3(-0.2, 0.0, 2.6)
-                ).with_scale(vec3(0.2, 0.2, 0.2))
+                ).with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE
             ));
         });
 }
@@ -400,5 +419,20 @@ pub fn create_pieces(
             PieceColor::Black,
             (6, i),
         );
+    }
+}
+
+
+fn move_pieces(time: Res<Time>, mut query: Query<(&mut Transform, &Piece)>) {
+    for (mut transform, piece) in query.iter_mut() {
+        let direction = vec3(piece.x as f32, 0.0, piece.y as f32) - transform.translation;
+
+        // Only move if the piece isn't already there (distance is big)
+        if direction.length() > 0.1 {
+            transform.translation += 
+                direction.normalize() * 
+                time.delta_secs() * 
+                vec3(2.0, 2.0, 2.0);
+        }
     }
 }
