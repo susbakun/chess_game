@@ -2,12 +2,22 @@ use bevy::prelude::*;
 
 use crate::board::SelectedPiece;
 
+pub struct PiecePlugin;
+impl Plugin for PiecePlugin {
+    fn build(&self, app: &mut App) {
+        app.init_resource::<SelectedPiece>()
+            .add_systems(Startup, create_pieces)
+            .add_systems(Update, move_pieces);
+    }
+}
+
 #[derive(Clone, Copy, PartialEq)]
 pub enum PieceColor {
     White,
     Black
 }
 
+#[derive(Clone, Copy)]
 pub enum PieceType {
     King,
     Queen,
@@ -17,7 +27,7 @@ pub enum PieceType {
     Pawn
 }
 
-#[derive(Component)]
+#[derive(Component, Clone, Copy)]
 pub struct Piece {
     pub color: PieceColor,
     pub piece_type: PieceType,
@@ -26,14 +36,102 @@ pub struct Piece {
     pub y: u8
 }
 
-pub struct PiecePlugin;
-impl Plugin for PiecePlugin {
-    fn build(&self, app: &mut App) {
-        app.init_resource::<SelectedPiece>()
-            .add_systems(Startup, create_pieces)
-            .add_systems(Update, move_pieces);
+
+impl Piece {
+    pub fn is_move_valid(&self, new_pos: (u8, u8), pieces: Vec<Piece>) -> bool {
+        // If there's a piece of the same color in the same square, it can't move
+        if color_of_square(new_pos, &pieces) == Some(self.color) {
+            return false
+        }
+
+        match self.piece_type {
+            PieceType::King => {
+                // Horizontal
+                ((self.x as i8 - new_pos.0 as i8).abs() == 1
+                    && (self.y == new_pos.1))
+                // Vertical
+                ||  ((self.y as i8 - new_pos.1 as i8).abs() == 1
+                    && (self.x == new_pos.0))
+                // Diagonal
+                ||  ((self.x as i8 - new_pos.0 as i8).abs() == 1
+                    && (self.y as i8 - new_pos.1 as i8).abs() == 1)
+            }
+            PieceType::Queen => {
+                is_path_empty((self.x, self.y), new_pos, &pieces)
+                    && ((self.x as i8 - new_pos.0 as i8).abs()
+                        == (self.y as i8 - new_pos.1 as i8).abs()
+                        ||  ((self.x == new_pos.0 && self.y != new_pos.1)
+                            ||  (self.y == new_pos.1 && self.x != new_pos.0)))
+            },
+            PieceType::Bishop => {
+                is_path_empty((self.x, self.y), new_pos, &pieces)
+                    && (self.x as i8 - new_pos.0 as i8).abs()
+                        == (self.y as i8 - new_pos.1 as i8).abs()
+            },
+            PieceType::Knight => {
+                ((self.x as i8 - new_pos.0 as i8).abs() == 1 
+                    && (self.y as i8 - new_pos.1 as i8).abs() == 2)
+                ||  ((self.x as i8 - new_pos.0 as i8).abs() == 2
+                    && (self.y as i8 - new_pos.1 as i8).abs() == 1)
+            },
+            PieceType::Rook => {
+                is_path_empty((self.x, self.y), new_pos, &pieces)
+                    && ((self.x == new_pos.0 && self.y != new_pos.1)
+                        || (self.y == new_pos.1 && self.x != new_pos.0))
+            },
+            PieceType::Pawn => {
+                if self.color == PieceColor::White {
+                    if new_pos.0 as i8 - self.x as i8 == 1 && (self.y == new_pos.1) {
+                        if color_of_square(new_pos, &pieces).is_none() {
+                            return true
+                        }
+                    }
+    
+                    if self.x == 1
+                        && new_pos.0 as i8 - self.x as i8 == 2
+                        && (self.y == new_pos.1)
+                        && is_path_empty((self.x, self.y), new_pos, &pieces) {
+                            if color_of_square(new_pos, &pieces).is_none() {
+                                return true
+                            }
+                    }
+    
+                    if new_pos.0 as i8 - self.x as i8 == 1
+                        && (self.y as i8 - new_pos.1 as i8).abs() == 1 {
+                            if color_of_square(new_pos, &pieces) == Some(PieceColor::Black) {
+                                return true
+                            }
+                    }
+                } else {
+                    if new_pos.0 as i8 - self.x as i8 == -1 && (self.y == new_pos.1) {
+                        if color_of_square(new_pos, &pieces).is_none() {
+                            return true
+                        }
+                    }
+    
+                    if self.x == 6
+                        && new_pos.0 as i8 - self.x as i8 == -2
+                        && (self.y == new_pos.1)
+                        && is_path_empty((self.x, self.y), new_pos, &pieces) {
+                            if color_of_square(new_pos, &pieces).is_none() {
+                                return true
+                            }
+                    }
+    
+                    if new_pos.0 as i8 - self.x as i8 == -1
+                        && (self.y as i8 - new_pos.1 as i8).abs() == 1 {
+                            if color_of_square(new_pos, &pieces) == Some(PieceColor::White) {
+                                return true
+                            }
+                    }
+                }
+
+                false
+            }
+        }
     }
 }
+
 
 
 fn spawn_king(
@@ -435,4 +533,63 @@ fn move_pieces(time: Res<Time>, mut query: Query<(&mut Transform, &Piece)>) {
                 vec3(2.0, 2.0, 2.0);
         }
     }
+}
+
+fn color_of_square(pos: (u8, u8), pieces: &Vec<Piece>) -> Option<PieceColor> {
+    for piece in pieces {
+        if piece.x == pos.0 && piece.y == pos.1 {
+            return Some(piece.color)
+        }
+    }
+
+    None
+}
+
+fn is_path_empty(begin: (u8, u8), end: (u8, u8), pieces: &Vec<Piece>) -> bool {
+    // same col
+    if begin.0 == end.0 {
+        for piece in pieces {
+            if piece.x == begin.0
+                && ((piece.y > begin.1 && piece.y < end.1)
+                    ||  (piece.y > end.1 && piece.y  < begin.1))
+            {
+                    return false
+            }
+        }
+    }
+    // same row
+    if begin.1 == end.1 {
+        for piece in pieces {
+            if piece.y == begin.1
+                && ((piece.x > begin.0 && piece.x < end.0)
+                    ||  (piece.x > end.0 && piece.x  < begin.0))
+            {
+                    return false
+            }
+        }
+    }
+
+    // Diagnols
+    let x_diff = (begin.0 as i8 - end.0 as i8).abs();
+    let y_diff = (begin.1 as i8 - end.1 as i8).abs();
+
+    if x_diff == y_diff {
+        for i in 1..x_diff {
+            let pos = if begin.0 < end.0 && begin.1 < end.1 {
+                (begin.0 + i as u8, begin.1 + i as u8)
+            } else if begin.0 > end.0 && begin.1 < end.1 {
+                (begin.0 - i as u8, begin.1 + i as u8)
+            } else if begin.0 < end.0 && begin.1 > end.1 {
+                (begin.0 + i as u8, begin.0 - i as u8)
+            } else {
+                (begin.0 - i as u8, begin.1 - i as u8)
+            };
+
+            if color_of_square(pos, pieces).is_some() {
+                return false
+            }
+        }
+    }
+
+    true
 }
