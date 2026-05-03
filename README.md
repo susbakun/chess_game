@@ -4,7 +4,8 @@ A chess game written in Rust and Bevy.
 
 ## Screenshot
 
-![Chess Game Screenshot](./screenshot.png)
+<img width="916" height="837" alt="Screenshot 2026-05-03 at 11 14 26 PM" src="https://github.com/user-attachments/assets/c1a0b660-8dd1-4eaa-807a-9ec981335af8" />
+
 
 ## Features
 
@@ -42,3 +43,10 @@ cargo run --release
 Built with:
 - [Rust](https://www.rust-lang.org/)
 - [Bevy](https://bevyengine.org/)
+
+
+## References
+
+- [Bevy Chess Tutorial](https://caballerocoll.com/blog/bevy-chess-tutorial/) - Excellent reference for chess game implementation in Bevy
+
+
