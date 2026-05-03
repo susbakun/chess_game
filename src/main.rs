@@ -7,11 +7,26 @@ mod board;
 use board::*;
 mod pieces;
 use pieces::*;
+mod ui;
+use ui::*;
 
 
 fn main() {
     App::new()
         .add_systems(Startup, setup)
+        .add_systems(
+            PreUpdate,
+            (|mut mode: ResMut<DebugPickingMode>| {
+                *mode = match *mode {
+                    DebugPickingMode::Disabled => DebugPickingMode::Normal,
+                    DebugPickingMode::Normal => DebugPickingMode::Noisy,
+                    DebugPickingMode::Noisy => DebugPickingMode::Disabled,
+                }
+            })
+            .distributive_run_if(bevy::input::common_conditions::input_just_pressed(
+                KeyCode::F3,
+            )),
+        )
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 resolution: WindowResolution::new(
@@ -26,20 +41,8 @@ fn main() {
         .add_plugins((MeshPickingPlugin, DebugPickingPlugin))
         .add_plugins(SquarePlugin)
         .add_plugins(PiecePlugin)
+        .add_plugins(UIPlugin)
         .insert_resource(DebugPickingMode::Normal)
-        .add_systems(
-            PreUpdate,
-            (|mut mode: ResMut<DebugPickingMode>| {
-                *mode = match *mode {
-                    DebugPickingMode::Disabled => DebugPickingMode::Normal,
-                    DebugPickingMode::Normal => DebugPickingMode::Noisy,
-                    DebugPickingMode::Noisy => DebugPickingMode::Disabled,
-                }
-            })
-            .distributive_run_if(bevy::input::common_conditions::input_just_pressed(
-                KeyCode::F3,
-            )),
-        )
         .run();
 }
 

@@ -1,11 +1,9 @@
 use bevy::prelude::*;
 
-use crate::board::SelectedPiece;
-
 pub struct PiecePlugin;
 impl Plugin for PiecePlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<SelectedPiece>()
+        app
             .add_systems(Startup, create_pieces)
             .add_systems(Update, move_pieces);
     }
@@ -17,7 +15,7 @@ pub enum PieceColor {
     Black
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum PieceType {
     King,
     Queen,
@@ -172,7 +170,6 @@ fn spawn_king(
             ));
         });
 }
-
 
 fn spawn_knight(
     mut commands: Commands,
@@ -519,7 +516,6 @@ pub fn create_pieces(
         );
     }
 }
-
 
 fn move_pieces(time: Res<Time>, mut query: Query<(&mut Transform, &Piece)>) {
     for (mut transform, piece) in query.iter_mut() {
