@@ -2,7 +2,15 @@ use bevy::prelude::*;
 use crate::board::*;
 use crate::pieces::*;
 
-
+pub struct UIPlugin;
+impl Plugin for UIPlugin {
+    fn build(&self, app: &mut App) {
+        app
+            .add_systems(Startup, init_next_move_text)
+            .add_systems(Update, next_move_text_update
+                .run_if(resource_changed::<PlayerTurn>));
+    }
+}
 // Component to mark the Text entity
 #[derive(Component)]
 struct NextMoveText;
@@ -13,7 +21,9 @@ fn init_next_move_text(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
-    let font = asset_server.load("fonts/FiraSans-Bold.ttf");
+    let font = asset_server.load(
+        "fonts/FiraSans-Bold.ttf"
+    );
 
     commands.spawn(Node {
         position_type: PositionType::Absolute,
@@ -44,10 +54,6 @@ fn next_move_text_update(
     turn: Res<PlayerTurn>,
     mut query: Query<(&mut Text, &NextMoveText)>
 ) {
-    if !turn.is_changed() {
-        return
-    }
-
     for (mut text, _tag) in query.iter_mut() {
         text.0 = format!(
             "Next move: {}",
@@ -56,14 +62,5 @@ fn next_move_text_update(
                 PieceColor::Black => "Black"
             }
         )
-    }
-}
-
-pub struct UIPlugin;
-impl Plugin for UIPlugin {
-    fn build(&self, app: &mut App) {
-        app
-            .add_systems(Startup, init_next_move_text)
-            .add_systems(Update, next_move_text_update);
     }
 }

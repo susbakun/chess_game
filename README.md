@@ -49,4 +49,3 @@ Built with:
 
 - [Bevy Chess Tutorial](https://caballerocoll.com/blog/bevy-chess-tutorial/) - Excellent reference for chess game implementation in Bevy
 
-
