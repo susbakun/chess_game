@@ -9,6 +9,7 @@ impl Plugin for SquarePlugin {
             .init_resource::<PlayerTurn>()
             .init_resource::<SelectedSquare>()
             .init_resource::<SelectedPiece>()
+            .init_resource::<SquareMaterials>()
             .add_message::<ResetSelectedEvent>()
             .add_systems(Startup, create_board)
             .add_systems(Update, move_piece
@@ -62,10 +63,39 @@ pub struct SelectedPiece {
     entity: Option<Entity>
 }
 
-pub fn create_board(
+#[derive(Resource)]
+struct SquareMaterials {
+    highlight_color: Handle<StandardMaterial>,
+    selected_color: Handle<StandardMaterial>,
+    black_color: Handle<StandardMaterial>,
+    white_color: Handle<StandardMaterial>,
+}
+
+impl FromWorld for SquareMaterials {
+    fn from_world(world: &mut World) -> Self {
+        let mut materials = world.resource_mut::<Assets<StandardMaterial>>();
+
+        Self {
+            highlight_color: materials.add(
+                Color::linear_rgb(0.8, 0.3, 0.3)
+            ),
+            selected_color: materials.add(
+                Color::linear_rgb(0.9, 0.1, 0.1)
+            ),
+            black_color: materials.add(
+                Color::linear_rgb(0., 0.1, 0.1)
+            ),
+            white_color: materials.add(
+                Color::linear_rgb(1., 0.9, 0.9)
+            ),
+        }
+    }
+}
+
+fn create_board(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>
+    materials: Res<SquareMaterials>
 ) {
     let mesh = meshes.add(Plane3d::new(
         Vec3::new(0.0, 1.0, 0.0), 
@@ -74,13 +104,11 @@ pub fn create_board(
     for i in 0..8 {
         for j in 0..8 {
             let is_white = (i + j + 1) % 2 == 0;
-            let color = if is_white {
-                Color::linear_rgb(1.0, 0.9, 0.9)
+            let material = if is_white {
+                materials.white_color.clone()
             } else {
-                Color::linear_rgb(0.0, 0.1, 0.1)
+                materials.black_color.clone()
             };
-
-            let material = materials.add(color);
 
             commands
                 .spawn((
@@ -100,8 +128,8 @@ pub fn create_board(
 fn on_square_hover(
     _over: On<Pointer<Over>>,
     selected_square: Res<SelectedSquare>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    query: Query<(&MeshMaterial3d<StandardMaterial>, &Square)>,
+    materials: Res<SquareMaterials>,
+    mut query: Query<(&mut MeshMaterial3d<StandardMaterial>, &Square)>,
 ) {
     // Don't reset color if this square is selected
     if let Some(selected_square_entity) = 
@@ -111,24 +139,16 @@ fn on_square_hover(
         }
     }
 
-    if let Ok((material_handle, _square)) = 
-        query.get(_over.entity) {
-        if let Some(material) = 
-            materials.get_mut(material_handle) {
-                // highlight color
-                material.base_color = Color::linear_rgb(
-                    0.8, 
-                    0.3, 
-                    0.3
-                );
-        }
+    if let Ok((mut material_handle, _square)) = 
+        query.get_mut(_over.entity) {
+            material_handle.0 = materials.highlight_color.clone();
     }
 }
 
 fn on_square_hover_end(
     _out: On<Pointer<Out>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    query: Query<(&MeshMaterial3d<StandardMaterial>, &Square)>,
+    materials: ResMut<SquareMaterials>,
+    mut query: Query<(&mut MeshMaterial3d<StandardMaterial>, &Square)>,
     selected_square: Res<SelectedSquare>
 ) {
     // Don't reset color if this square is selected
@@ -139,68 +159,46 @@ fn on_square_hover_end(
         }
     }
 
-    if let Ok((material_handle, square)) = 
-        query.get(_out.entity) {
-        if let Some(material) = 
-            materials.get_mut(material_handle) {
-                material.base_color = if square.is_white() {
-                    Color::linear_rgb(
-                        1.0, 
-                        0.9, 
-                        0.9)
-                } else {
-                    Color::linear_rgb(
-                        0.0, 
-                        0.1, 
-                        0.1)
-                };
-        }
+    if let Ok((mut material_handle, square)) = 
+        query.get_mut(_out.entity) {
+        material_handle.0 = if square.is_white() {
+            materials.white_color.clone()
+        } else {
+            materials.black_color.clone()
+        };
     }
 }
 
 fn on_sqaure_click(
     _click: On<Pointer<Click>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+    materials: Res<SquareMaterials>,
     mut selected_square: ResMut<SelectedSquare>,
     mut selected_piece: ResMut<SelectedPiece>,
-    squares_query: Query<(&MeshMaterial3d<StandardMaterial>, &Square)>
+    mut squares_query: Query<(&mut MeshMaterial3d<StandardMaterial>, &Square)>
 ) {
     if _click.button != PointerButton::Primary {
         return
     }   
 
-    if let Ok((material_handle, _square)) = 
-        squares_query.get(_click.entity) {
-            if let Some(prev_square_entity) = 
-                selected_square.entity {
-                if prev_square_entity != _click.entity {
-                    if let Ok((prev_material, prev_square)) = 
-                        squares_query.get(prev_square_entity) {
-                        if let Some(material) = 
-                            materials.get_mut(prev_material) {
-                                material.base_color = if prev_square.is_white() {
-                                    Color::linear_rgb(
-                                        1.0, 
-                                        0.9, 
-                                        0.9)
-                                } else {
-                                    Color::linear_rgb(
-                                        0.0, 
-                                        0.1, 
-                                        0.1)
-                                };
-                            }
-                    }
-                }
+    // reset the previous selected square
+    if let Some(prev_square_entity) = 
+        selected_square.entity {
+        if prev_square_entity != _click.entity {
+            if let Ok((mut prev_material, prev_square)) = 
+                squares_query.get_mut(prev_square_entity) {
+                prev_material.0 = if prev_square.is_white() {
+                    materials.white_color.clone()
+                } else {
+                    materials.black_color.clone()
+                };
             }
-        // Highlight clicked square
-        if let Some(material) = 
-            materials.get_mut(material_handle) {
-                material.base_color = Color::linear_rgb(
-                    0.9, 
-                    0.1, 
-                    0.1);
         }
+    }
+
+    if let Ok((mut material_handle, _square)) = 
+        squares_query.get_mut(_click.entity) {
+        // Highlight clicked square
+        material_handle.0 = materials.selected_color.clone();
         selected_square.entity = Some(_click.entity);
 
     } else {
