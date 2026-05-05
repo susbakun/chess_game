@@ -9,10 +9,10 @@ A chess game written in Rust and Bevy.
 
 ## Features
 
-- Full chess rule implementation
+- Full chess rule implementation(except the ones in the [todo section](#todo))
 - Interactive piece movement and capture
 - Move validation and turn-based gameplay
-- Clean, intuitive UI
+- Clean UI
 
 ## Getting Started
 
@@ -32,11 +32,15 @@ cd chess_game
 cargo run --release
 ```
 
-## Planned Features
+
+## TODO
 
 - [ ] Multiplayer support
-- [ ] Camera control
-- [ ] Play with an AI
+- [x] Implement a system that keeps track of the taken pieces and displays them, maybe in UI or as objects next to the board.
+- [ ] Finish implementing all the rules: castling, en passant, check mates, etc.
+- [ ] Try moving the camera around!.
+- [ ] Make a resource that keeps track of all the moves in a vector, so they can be reverted and saved.
+
 
 ## Development
 
