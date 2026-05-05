@@ -65,7 +65,6 @@ fn setup(mut commands: Commands,) {
             )),
     ));
 
-    // raycast.cast_ray(ray, settings)
 
     commands.spawn((
         DirectionalLight {

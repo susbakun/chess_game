@@ -4,6 +4,7 @@ pub struct PiecePlugin;
 impl Plugin for PiecePlugin {
     fn build(&self, app: &mut App) {
         app
+            .init_resource::<PieceHandles>()
             .add_systems(Startup, create_pieces)
             .add_systems(Update, move_pieces);
     }
@@ -15,7 +16,7 @@ pub enum PieceColor {
     Black
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PieceType {
     King,
     Queen,
@@ -30,13 +31,13 @@ pub struct Piece {
     pub color: PieceColor,
     pub piece_type: PieceType,
     // current position
-    pub x: u8,
-    pub y: u8
+    pub x: i8,
+    pub y: i8
 }
 
 
 impl Piece {
-    pub fn is_move_valid(&self, new_pos: (u8, u8), pieces: Vec<Piece>) -> bool {
+    pub fn is_move_valid(&self, new_pos: (i8, i8), pieces: Vec<Piece>) -> bool {
         // If there's a piece of the same color in the same square, it can't move
         if color_of_square(new_pos, &pieces) == Some(self.color) {
             return false
@@ -45,32 +46,32 @@ impl Piece {
         match self.piece_type {
             PieceType::King => {
                 // Horizontal
-                ((self.x as i8 - new_pos.0 as i8).abs() == 1
+                ((self.x - new_pos.0).abs() == 1
                     && (self.y == new_pos.1))
                 // Vertical
-                ||  ((self.y as i8 - new_pos.1 as i8).abs() == 1
+                ||  ((self.y - new_pos.1).abs() == 1
                     && (self.x == new_pos.0))
                 // Diagonal
-                ||  ((self.x as i8 - new_pos.0 as i8).abs() == 1
-                    && (self.y as i8 - new_pos.1 as i8).abs() == 1)
+                ||  ((self.x - new_pos.0).abs() == 1
+                    && (self.y - new_pos.1).abs() == 1)
             }
             PieceType::Queen => {
                 is_path_empty((self.x, self.y), new_pos, &pieces)
-                    && ((self.x as i8 - new_pos.0 as i8).abs()
-                        == (self.y as i8 - new_pos.1 as i8).abs()
+                    && ((self.x - new_pos.0).abs()
+                        == (self.y - new_pos.1).abs()
                         ||  ((self.x == new_pos.0 && self.y != new_pos.1)
                             ||  (self.y == new_pos.1 && self.x != new_pos.0)))
             },
             PieceType::Bishop => {
                 is_path_empty((self.x, self.y), new_pos, &pieces)
-                    && (self.x as i8 - new_pos.0 as i8).abs()
-                        == (self.y as i8 - new_pos.1 as i8).abs()
+                    && (self.x - new_pos.0).abs()
+                        == (self.y - new_pos.1).abs()
             },
             PieceType::Knight => {
-                ((self.x as i8 - new_pos.0 as i8).abs() == 1 
-                    && (self.y as i8 - new_pos.1 as i8).abs() == 2)
-                ||  ((self.x as i8 - new_pos.0 as i8).abs() == 2
-                    && (self.y as i8 - new_pos.1 as i8).abs() == 1)
+                ((self.x - new_pos.0).abs() == 1 
+                    && (self.y - new_pos.1).abs() == 2)
+                ||  ((self.x - new_pos.0).abs() == 2
+                    && (self.y - new_pos.1).abs() == 1)
             },
             PieceType::Rook => {
                 is_path_empty((self.x, self.y), new_pos, &pieces)
@@ -79,14 +80,14 @@ impl Piece {
             },
             PieceType::Pawn => {
                 if self.color == PieceColor::White {
-                    if new_pos.0 as i8 - self.x as i8 == 1 && (self.y == new_pos.1) {
+                    if new_pos.0 - self.x == 1 && (self.y == new_pos.1) {
                         if color_of_square(new_pos, &pieces).is_none() {
                             return true
                         }
                     }
     
                     if self.x == 1
-                        && new_pos.0 as i8 - self.x as i8 == 2
+                        && new_pos.0 - self.x == 2
                         && (self.y == new_pos.1)
                         && is_path_empty((self.x, self.y), new_pos, &pieces) {
                             if color_of_square(new_pos, &pieces).is_none() {
@@ -94,21 +95,21 @@ impl Piece {
                             }
                     }
     
-                    if new_pos.0 as i8 - self.x as i8 == 1
-                        && (self.y as i8 - new_pos.1 as i8).abs() == 1 {
+                    if new_pos.0 - self.x == 1
+                        && (self.y - new_pos.1).abs() == 1 {
                             if color_of_square(new_pos, &pieces) == Some(PieceColor::Black) {
                                 return true
                             }
                     }
                 } else {
-                    if new_pos.0 as i8 - self.x as i8 == -1 && (self.y == new_pos.1) {
+                    if new_pos.0 - self.x == -1 && (self.y == new_pos.1) {
                         if color_of_square(new_pos, &pieces).is_none() {
                             return true
                         }
                     }
     
                     if self.x == 6
-                        && new_pos.0 as i8 - self.x as i8 == -2
+                        && new_pos.0 - self.x == -2
                         && (self.y == new_pos.1)
                         && is_path_empty((self.x, self.y), new_pos, &pieces) {
                             if color_of_square(new_pos, &pieces).is_none() {
@@ -116,8 +117,8 @@ impl Piece {
                             }
                     }
     
-                    if new_pos.0 as i8 - self.x as i8 == -1
-                        && (self.y as i8 - new_pos.1 as i8).abs() == 1 {
+                    if new_pos.0 - self.x == -1
+                        && (self.y - new_pos.1).abs() == 1 {
                             if color_of_square(new_pos, &pieces) == Some(PieceColor::White) {
                                 return true
                             }
@@ -131,6 +132,51 @@ impl Piece {
 }
 
 
+#[derive(Resource, Clone)]
+pub struct PieceHandles {
+    king_handle: Handle<Mesh>,
+    king_cross_handle: Handle<Mesh>,
+    queen_handle: Handle<Mesh>,
+    knight_1_handle: Handle<Mesh>,
+    knight_2_handle: Handle<Mesh>,
+    bishop_handle: Handle<Mesh>,
+    rook_handle: Handle<Mesh>,
+    pawn_handle: Handle<Mesh>
+}
+
+impl FromWorld for PieceHandles {
+    fn from_world(world: &mut World) -> Self {
+        let asset_server = world.resource::<AssetServer>();
+
+        let king_handle: Handle<Mesh> = 
+            asset_server.load("models/pieces.glb#Mesh0/Primitive0");
+        let king_cross_handle: Handle<Mesh> = 
+            asset_server.load("models/pieces.glb#Mesh1/Primitive0");
+        let pawn_handle: Handle<Mesh> = 
+            asset_server.load("models/pieces.glb#Mesh2/Primitive0");
+        let knight_1_handle: Handle<Mesh> = 
+            asset_server.load("models/pieces.glb#Mesh3/Primitive0");
+        let knight_2_handle: Handle<Mesh> =
+                asset_server.load("models/pieces.glb#Mesh4/Primitive0");
+        let rook_handle: Handle<Mesh> =
+                asset_server.load("models/pieces.glb#Mesh5/Primitive0");
+        let bishop_handle: Handle<Mesh> =
+                asset_server.load("models/pieces.glb#Mesh6/Primitive0");
+        let queen_handle: Handle<Mesh> =
+                asset_server.load("models/pieces.glb#Mesh7/Primitive0");
+
+        Self {
+            king_handle,
+            king_cross_handle,
+            queen_handle,
+            knight_1_handle,
+            knight_2_handle,
+            rook_handle,
+            bishop_handle,
+            pawn_handle
+        }
+    }
+}
 
 fn spawn_king(
     mut commands: Commands,
@@ -138,7 +184,7 @@ fn spawn_king(
     mesh: Handle<Mesh>,
     mesh_cross: Handle<Mesh>,
     piece_color: PieceColor,
-    position: (u8, u8)
+    position: (i8, i8)
 ) {
     commands
         .spawn((
@@ -177,7 +223,7 @@ fn spawn_knight(
     mesh_1: Handle<Mesh>,
     mesh_2: Handle<Mesh>,
     piece_color: PieceColor,
-    position: (u8, u8),
+    position: (i8, i8),
     rotate: bool
 ) {
     commands
@@ -224,7 +270,7 @@ fn spawn_queen(
     material: Handle<StandardMaterial>,
     mesh: Handle<Mesh>,
     piece_color: PieceColor,
-    position: (u8, u8)
+    position: (i8, i8)
 ) {
     commands
         .spawn((
@@ -254,7 +300,7 @@ fn spawn_bishop(
     mesh: Handle<Mesh>,
     material: Handle<StandardMaterial>,
     piece_color: PieceColor,
-    position: (u8, u8)
+    position: (i8, i8)
 ) {
     commands
         .spawn((
@@ -285,7 +331,7 @@ fn spawn_rook(
     mesh: Handle<Mesh>,
     material: Handle<StandardMaterial>,
     piece_color: PieceColor,
-    position: (u8, u8)
+    position: (i8, i8)
 ) {
     commands
         .spawn((
@@ -316,7 +362,7 @@ fn spawn_pawn(
     mesh: Handle<Mesh>,
     material: Handle<StandardMaterial>,
     piece_color: PieceColor,
-    position: (u8, u8)
+    position: (i8, i8)
 ) {
     commands
         .spawn((
@@ -343,28 +389,86 @@ fn spawn_pawn(
 }
 
 
+pub fn spawn_piece(
+    mut commands: Commands,
+    material: Handle<StandardMaterial>,
+    piece: Piece,
+    piece_handles: PieceHandles
+) {
+    let position = (piece.x, piece.y);
+
+    match piece.piece_type {
+        PieceType::King => {
+            spawn_king(
+                commands.reborrow(), 
+                material,
+                piece_handles.king_handle.clone(),
+                piece_handles.king_cross_handle.clone(), 
+                piece.color, 
+                position
+            );
+        }
+        PieceType::Queen => {
+            spawn_queen(
+                commands.reborrow(), 
+                material, 
+                piece_handles.queen_handle.clone(), 
+                piece.color, 
+                position
+            );
+        }
+        PieceType::Knight => {
+            let rotate = if piece.color == PieceColor::White {
+                false
+            } else {
+                true
+            };
+
+            spawn_knight(
+                commands.reborrow(), 
+                material, 
+                piece_handles.knight_1_handle.clone(), 
+                piece_handles.knight_2_handle.clone(), 
+                piece.color, 
+                position,
+                rotate
+            );
+        }
+        PieceType::Bishop => {
+            spawn_bishop(
+                commands.reborrow(), 
+                piece_handles.bishop_handle.clone(), 
+                material, 
+                piece.color, 
+                position
+            );
+        }
+        PieceType::Rook => {
+            spawn_rook(
+                commands.reborrow(), 
+                piece_handles.rook_handle.clone(), 
+                material, 
+                piece.color, 
+                position
+            );
+        }
+        PieceType::Pawn => {
+            spawn_pawn(
+                commands.reborrow(), 
+                piece_handles.pawn_handle.clone(), 
+                material, 
+                piece.color, 
+                position
+            );
+        }
+    }
+}
+
 pub fn create_pieces(
     mut commands: Commands,
     mut materials: ResMut<Assets<StandardMaterial>>,
-    asset_server: Res<AssetServer>
+    piece_handles: Res<PieceHandles>
 ) {
-    let king_handle: Handle<Mesh> = 
-        asset_server.load("models/pieces.glb#Mesh0/Primitive0");
-    let king_cross_handle: Handle<Mesh> = 
-        asset_server.load("models/pieces.glb#Mesh1/Primitive0");
-    let pawn_handle: Handle<Mesh> = 
-        asset_server.load("models/pieces.glb#Mesh2/Primitive0");
-    let knight_1_handle: Handle<Mesh> = 
-        asset_server.load("models/pieces.glb#Mesh3/Primitive0");
-    let knight_2_handle: Handle<Mesh> =
-            asset_server.load("models/pieces.glb#Mesh4/Primitive0");
-    let rook_handle: Handle<Mesh> =
-            asset_server.load("models/pieces.glb#Mesh5/Primitive0");
-    let bishop_handle: Handle<Mesh> =
-            asset_server.load("models/pieces.glb#Mesh6/Primitive0");
-    let queen_handle: Handle<Mesh> =
-            asset_server.load("models/pieces.glb#Mesh7/Primitive0");
-
     let white_material = materials.add(
         Color::linear_rgb(1.0, 0.9, 0.9));
 
@@ -372,147 +476,226 @@ pub fn create_pieces(
         Color::linear_rgb(0.0, 0.1, 0.1)
     );
 
-    spawn_rook(
-        commands.reborrow(), 
-        rook_handle.clone(), 
-        white_material.clone(), 
-        PieceColor::White,
-        (0, 0)
-    );
-    spawn_knight(
+    // white pieces
+    spawn_piece(
         commands.reborrow(), 
         white_material.clone(), 
-        knight_1_handle.clone(),
-        knight_2_handle.clone(),
-        PieceColor::White,
-        (0, 1),
-        false
+        Piece { 
+            color: PieceColor::White, 
+            piece_type: PieceType::Rook, 
+            x: 0, 
+            y: 0 
+        },
+        piece_handles.clone()
     );
-    spawn_bishop(
+
+    spawn_piece(
         commands.reborrow(), 
-        bishop_handle.clone(), 
         white_material.clone(),
-        PieceColor::White,
-        (0, 2)
+        Piece { 
+            color: PieceColor::White, 
+            piece_type: PieceType::Knight, 
+            x: 0, 
+            y: 1 
+        },
+        piece_handles.clone()
     );
-    spawn_queen(
+
+    spawn_piece(
         commands.reborrow(), 
-        white_material.clone(), 
-        queen_handle.clone(),
-        PieceColor::White,
-        (0, 3)
-    );
-    spawn_king(
-        commands.reborrow(), 
-        white_material.clone(), 
-        king_handle.clone(), 
-        king_cross_handle.clone(),
-        PieceColor::White,
-        (0, 4)
-    );
-    spawn_bishop(
-        commands.reborrow(), 
-        bishop_handle.clone(), 
         white_material.clone(),
-        PieceColor::White,
-        (0, 5)
+        Piece { 
+            color: PieceColor::White, 
+            piece_type: PieceType::Bishop, 
+            x: 0, 
+            y: 2 
+        },
+        piece_handles.clone()
     );
-    spawn_knight(
+
+    spawn_piece(
+        commands.reborrow(), 
+        white_material.clone(),
+        Piece { 
+            color: PieceColor::White, 
+            piece_type: PieceType::Queen, 
+            x: 0, 
+            y: 3 
+        },
+        piece_handles.clone()
+    );
+
+    spawn_piece(
+        commands.reborrow(), 
+        white_material.clone(),
+        Piece { 
+            color: PieceColor::White, 
+            piece_type: PieceType::King, 
+            x: 0, 
+            y: 4
+        },
+        piece_handles.clone()
+    );
+
+    spawn_piece(
+        commands.reborrow(), 
+        white_material.clone(),
+        Piece { 
+            color: PieceColor::White, 
+            piece_type: PieceType::Bishop, 
+            x: 0, 
+            y: 5
+        },
+        piece_handles.clone()
+    );
+
+    spawn_piece(
+        commands.reborrow(), 
+        white_material.clone(),
+        Piece { 
+            color: PieceColor::White, 
+            piece_type: PieceType::Knight, 
+            x: 0, 
+            y: 6
+        },
+        piece_handles.clone()
+    );
+
+    spawn_piece(
         commands.reborrow(), 
         white_material.clone(), 
-        knight_1_handle.clone(),
-        knight_2_handle.clone(),
-        PieceColor::White,
-        (0, 6),
-        false
-    );
-    spawn_rook(
-        commands.reborrow(), 
-        rook_handle.clone(), 
-        white_material.clone(),
-        PieceColor::White,
-        (0, 7)
+        Piece { 
+            color: PieceColor::White, 
+            piece_type: PieceType::Rook, 
+            x: 0, 
+            y: 7
+        },
+        piece_handles.clone()
     );
 
     for i in 0..8 {
-        spawn_pawn(
+        spawn_piece(
             commands.reborrow(), 
-            pawn_handle.clone(), 
             white_material.clone(),
-            PieceColor::White,
-            (1, i)
+            Piece { 
+                color: PieceColor::White, 
+                piece_type: PieceType::Pawn,
+                x: 1, 
+                y: i 
+            },
+            piece_handles.clone()
         );
     }
 
-    spawn_rook(
-        commands.reborrow(),
-        rook_handle.clone(),
-        black_material.clone(),
-        PieceColor::Black,
-        (7, 0),
+
+    // black pieces
+    spawn_piece(
+        commands.reborrow(), 
+        black_material.clone(), 
+        Piece { 
+            color: PieceColor::Black, 
+            piece_type: PieceType::Rook, 
+            x: 7,
+            y: 0 
+        },
+        piece_handles.clone()
     );
-    spawn_knight(
-        commands.reborrow(),
+
+    spawn_piece(
+        commands.reborrow(), 
         black_material.clone(),
-        knight_1_handle.clone(),
-        knight_2_handle.clone(),
-        PieceColor::Black,
-        (7, 1),
-        true
+        Piece { 
+            color: PieceColor::Black, 
+            piece_type: PieceType::Knight, 
+            x: 7, 
+            y: 1 
+        },
+        piece_handles.clone()
     );
-    spawn_bishop(
-        commands.reborrow(),
-        bishop_handle.clone(),
+
+    spawn_piece(
+        commands.reborrow(), 
         black_material.clone(),
-        PieceColor::Black,
-        (7, 2),
+        Piece { 
+            color: PieceColor::Black, 
+            piece_type: PieceType::Bishop, 
+            x: 7, 
+            y: 2 
+        },
+        piece_handles.clone()
     );
-    spawn_queen(
-        commands.reborrow(),
+
+    spawn_piece(
+        commands.reborrow(), 
         black_material.clone(),
-        queen_handle.clone(),
-        PieceColor::Black,
-        (7, 3),
+        Piece { 
+            color: PieceColor::Black, 
+            piece_type: PieceType::Queen, 
+            x: 7, 
+            y: 3 
+        },
+        piece_handles.clone()
     );
-    spawn_king(
-        commands.reborrow(),
+
+    spawn_piece(
+        commands.reborrow(), 
         black_material.clone(),
-        king_handle.clone(),
-        king_cross_handle.clone(),
-        PieceColor::Black,
-        (7, 4),
+        Piece { 
+            color: PieceColor::Black, 
+            piece_type: PieceType::King, 
+            x: 7, 
+            y: 4
+        },
+        piece_handles.clone()
     );
-    spawn_bishop(
-        commands.reborrow(),
-        bishop_handle.clone(),
+
+    spawn_piece(
+        commands.reborrow(), 
         black_material.clone(),
-        PieceColor::Black,
-        (7, 5),
+        Piece { 
+            color: PieceColor::Black, 
+            piece_type: PieceType::Bishop, 
+            x: 7, 
+            y: 5
+        },
+        piece_handles.clone()
     );
-    spawn_knight(
-        commands.reborrow(),
+
+    spawn_piece(
+        commands.reborrow(), 
         black_material.clone(),
-        knight_1_handle.clone(),
-        knight_2_handle.clone(),
-        PieceColor::Black,
-        (7, 6),
-        true
+        Piece { 
+            color: PieceColor::Black, 
+            piece_type: PieceType::Knight, 
+            x: 7, 
+            y: 6
+        },
+        piece_handles.clone()
     );
-    spawn_rook(
-        commands.reborrow(),
-        rook_handle.clone(),
-        black_material.clone(),
-        PieceColor::Black,
-        (7, 7),
+
+    spawn_piece(
+        commands.reborrow(), 
+        black_material.clone(), 
+        Piece { 
+            color: PieceColor::Black, 
+            piece_type: PieceType::Rook, 
+            x: 7, 
+            y: 7
+        },
+        piece_handles.clone()
     );
 
     for i in 0..8 {
-        spawn_pawn(
-            commands.reborrow(),
-            pawn_handle.clone(),
+        spawn_piece(
+            commands.reborrow(), 
             black_material.clone(),
-            PieceColor::Black,
-            (6, i),
+            Piece { 
+                color: PieceColor::Black, 
+                piece_type: PieceType::Pawn,
+                x: 6, 
+                y: i 
+            },
+            piece_handles.clone()
         );
     }
 }
@@ -531,7 +714,7 @@ fn move_pieces(time: Res<Time>, mut query: Query<(&mut Transform, &Piece)>) {
     }
 }
 
-fn color_of_square(pos: (u8, u8), pieces: &Vec<Piece>) -> Option<PieceColor> {
+fn color_of_square(pos: (i8, i8), pieces: &Vec<Piece>) -> Option<PieceColor> {
     for piece in pieces {
         if piece.x == pos.0 && piece.y == pos.1 {
             return Some(piece.color)
@@ -541,7 +724,7 @@ fn color_of_square(pos: (u8, u8), pieces: &Vec<Piece>) -> Option<PieceColor> {
     None
 }
 
-fn is_path_empty(begin: (u8, u8), end: (u8, u8), pieces: &Vec<Piece>) -> bool {
+fn is_path_empty(begin: (i8, i8), end: (i8, i8), pieces: &Vec<Piece>) -> bool {
     // same col
     if begin.0 == end.0 {
         for piece in pieces {
@@ -572,13 +755,13 @@ fn is_path_empty(begin: (u8, u8), end: (u8, u8), pieces: &Vec<Piece>) -> bool {
     if x_diff == y_diff {
         for i in 1..x_diff {
             let pos = if begin.0 < end.0 && begin.1 < end.1 {
-                (begin.0 + i as u8, begin.1 + i as u8)
+                (begin.0 + i, begin.1 + i)
             } else if begin.0 > end.0 && begin.1 < end.1 {
-                (begin.0 - i as u8, begin.1 + i as u8)
+                (begin.0 - i, begin.1 + i)
             } else if begin.0 < end.0 && begin.1 > end.1 {
-                (begin.0 + i as u8, begin.0 - i as u8)
+                (begin.0 + i, begin.0 - i)
             } else {
-                (begin.0 - i as u8, begin.1 - i as u8)
+                (begin.0 - i, begin.1 - i)
             };
 
             if color_of_square(pos, pieces).is_some() {

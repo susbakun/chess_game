@@ -10,6 +10,7 @@ impl Plugin for SquarePlugin {
             .init_resource::<SelectedSquare>()
             .init_resource::<SelectedPiece>()
             .init_resource::<SquareMaterials>()
+            .init_resource::<GoneCount>()
             .add_message::<ResetSelectedEvent>()
             .add_systems(Startup, create_board)
             .add_systems(Update, move_piece
@@ -25,8 +26,8 @@ impl Plugin for SquarePlugin {
 
 #[derive(Component)]
 pub struct Square {
-    pub x: u8,
-    pub y: u8
+    pub x: i8,
+    pub y: i8
 }
 
 impl Square {
@@ -73,7 +74,8 @@ struct SquareMaterials {
 
 impl FromWorld for SquareMaterials {
     fn from_world(world: &mut World) -> Self {
-        let mut materials = world.resource_mut::<Assets<StandardMaterial>>();
+        let mut materials = 
+            world.resource_mut::<Assets<StandardMaterial>>();
 
         Self {
             highlight_color: materials.add(
@@ -281,7 +283,9 @@ fn move_piece(
                     return;
             };
 
-            if piece.is_move_valid((square.x, square.y), pieces_vec) {
+            if piece.is_move_valid((square.x, square.y), pieces_vec) 
+                && piece.color == turn.0
+            {
                 for (other_entity, other_piece) in pieces_entity_vec {
                     if other_piece.x == square.x
                         && other_piece.y == square.y 
@@ -316,21 +320,83 @@ fn reset_selected(
 
 #[derive(Component)]
 struct Taken;
+
+
+// counting removed pieces (whites, blacks)
+#[derive(Resource, Default)]
+struct GoneCount(u8, u8);
+
+
 fn despawn_taken_pieces(
     mut commands: Commands,
-    query: Query<(Entity, &Piece, &Taken)>
+    materials: Res<SquareMaterials>,
+    piece_handles: Res<PieceHandles>,
+    mut gone_count: ResMut<GoneCount>,
+    mut query: Query<(Entity, &mut Piece, &Taken)>
 ) {
-    for (entity, piece, _taken) in query.iter() {
-        if piece.piece_type == PieceType::King {
-            println!(
-                "{} won! Thanks for playing!",
-                match piece.color {
-                    PieceColor::White => "Black",
-                    PieceColor::Black => "White",
-                }
+    for (
+        entity, 
+        piece, 
+        _taken
+    ) in 
+        query.iter_mut() 
+        {
+            if piece.piece_type == PieceType::King {
+                println!(
+                    "{} won! Thanks for playing!",
+                    match piece.color {
+                        PieceColor::White => "Black",
+                        PieceColor::Black => "White",
+                    }
+                );
+                std::process::exit(0);
+            }
+            commands.entity(entity).despawn();
+
+            let material = if piece.color == PieceColor::White {
+                gone_count.0 += 1;
+                materials.white_color.clone()
+            } else {
+                gone_count.1 += 1;
+                materials.black_color.clone()
+            };
+            
+            render_taken_on_side(
+                commands.reborrow(),
+                *piece,
+                material,
+                (gone_count.0, gone_count.1),
+                piece_handles.clone()
             );
-            std::process::exit(0);
-        }
-        commands.entity(entity).despawn();
+    }
+}
+
+fn render_taken_on_side(
+    commands: Commands,
+    mut piece: Piece,
+    material: Handle<StandardMaterial>,
+    gone_count: (u8, u8),
+    piece_handles: PieceHandles,
+) {
+    if piece.color == PieceColor::White {
+        piece.x = 8 - (gone_count.0 as i8 % 8);
+        piece.y = 8 + (gone_count.0 as i8 / 8);
+
+        spawn_piece(
+            commands,
+            material, 
+            piece, 
+            piece_handles
+        );
+    } else {
+        piece.x = 8 - (gone_count.1 as i8 % 8);
+        piece.y = -2 - (gone_count.1 as i8 / 8);
+
+        spawn_piece(
+            commands,
+            material, 
+            piece, 
+            piece_handles
+        );
     }
 }
