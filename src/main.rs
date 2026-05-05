@@ -53,13 +53,7 @@ fn setup(mut commands: Commands,) {
             Camera3d::default(),
             Msaa::Sample4,
             Transform::from_matrix(
-                // | R R R | Tx |
-                // | R R R | Ty |
-                // | R R R | Tz |
-                // | 0 0 0 | 1  |
-                // instead of (pitch, yaw, roll)
                 Mat4::from_rotation_translation(
-                    // around this axis (should be normalized)
                 Quat::from_xyzw(-0.3, -0.5, -0.3, 0.5).normalize(), 
                 Vec3::new(-7.0, 20.0, 4.0)
             )),
