@@ -1,4 +1,7 @@
 use super::*;
+use crate::player::*;
+
+
 
 #[derive(Component, Clone, Copy)]
 pub struct Piece {
@@ -6,18 +9,23 @@ pub struct Piece {
     pub piece_type: PieceType,
     // current position
     pub x: i8,
-    pub y: i8
+    pub y: i8,
+    pub taken: bool
 }
 
 
 impl Piece {
-    pub fn is_move_valid(&self, new_pos: (i8, i8), pieces: &Vec<Piece>) -> bool {
+    pub fn is_move_valid(&self, new_pos: (i8, i8), player: &Player, pieces: &Vec<Piece>) -> bool {
         // If there's a piece of the same color in the same square, it can't move
         if color_of_square(new_pos, &pieces) == Some(self.color) {
             return false
         }
 
-        if self.is_check(new_pos, pieces) {
+
+        let pieces_after_move= self.
+            simulate_next_step(new_pos, &pieces);
+
+        if player.is_check(&pieces_after_move) {
             return false
         }
 
@@ -109,10 +117,10 @@ impl Piece {
         }
     }
 
-    pub fn is_check(&self, new_pos: (i8, i8), pieces: &Vec<Piece>) -> bool {
+    pub fn simulate_next_step(&self, new_pos: (i8, i8), pieces: &Vec<Piece>) -> Vec<Piece> {
         // Create a simulated board after the move
         let mut pieces_after_move = pieces.clone();
-        
+            
         // Remove the piece from its current position
         pieces_after_move
             .retain(|p| 
@@ -130,85 +138,6 @@ impl Piece {
         moved_piece.y = new_pos.1;
         pieces_after_move.push(moved_piece);
 
-        let enemy_pieces = pieces_after_move
-            .iter()
-            .filter(|piece| piece.color != self.color);
-
-        let king = pieces_after_move
-            .iter()
-            .find(|piece| piece.piece_type == PieceType::King 
-                && piece.color == self.color)
-            .expect("the king wasn't found");
-
-        for piece in enemy_pieces {
-            match piece.piece_type {
-                PieceType::Pawn => {
-                    if piece.color == PieceColor::White {
-                        if (piece.x + 1, piece.y + 1) == (king.x, king.y) 
-                            || (piece.x + 1, piece.y - 1) == (king.x, king.y)
-                        {
-                            return true
-                        }
-                    } else {
-                        if (piece.x - 1, piece.y + 1) == (king.x, king.y) 
-                            || (piece.x - 1, piece.y - 1) == (king.x, king.y) 
-                        {
-                            return true
-                        }
-                    }
-                },
-                PieceType::Rook => {
-                    if (king.x == piece.x || king.y == piece.y)
-                        && is_path_empty(
-                            (piece.x, piece.y), 
-                            (king.x, king.y), &pieces_after_move) {
-                            return true
-                        }
-                }
-                PieceType::Bishop => {
-                    if ((king.x - piece.x).abs() 
-                        == (king.y - piece.y).abs()) 
-                        &&  is_path_empty(
-                            (piece.x, piece.y), 
-                            (king.x, king.y), &pieces_after_move) {
-                            return true
-                        }
-                }
-                PieceType::Queen => {
-                    if (((king.x - piece.x).abs() 
-                        == (king.y - piece.y).abs()) 
-                        && is_path_empty(
-                            (piece.x, piece.y), 
-                            (king.x, king.y), &pieces_after_move))
-                        || (king.x == piece.x || king.y == piece.y) 
-                        && is_path_empty(
-                            (piece.x, piece.y), 
-                            (king.x, king.y), &pieces_after_move) {
-                            return true
-                        }
-                }
-                PieceType::King => {
-                    if ((king.x - piece.x).abs() == 1
-                        && (king.y == piece.y))
-                    ||  ((king.y - piece.y).abs() == 1
-                        && (king.x == piece.x))
-                    ||  ((king.x - piece.x).abs() == 1
-                        && (king.y - piece.y).abs() == 1) {
-                            return true
-                        }
-                }
-                PieceType::Knight => {
-                    if ((king.x - piece.x).abs() == 2
-                        && (king.y - piece.y).abs() == 1)
-                    ||  ((king.x - piece.x).abs() == 1
-                        && (king.y - piece.y).abs() == 2) {
-                            return true
-                        }
-                }
-            };
-        }
-
-
-        false
+        pieces_after_move
     }
 }

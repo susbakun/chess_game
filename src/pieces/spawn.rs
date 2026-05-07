@@ -6,7 +6,8 @@ fn spawn_king(
     mesh: Handle<Mesh>,
     mesh_cross: Handle<Mesh>,
     piece_color: PieceColor,
-    position: (i8, i8)
+    position: (i8, i8),
+    taken: bool
 ) {
     commands
         .spawn((
@@ -17,7 +18,8 @@ fn spawn_king(
                 color: piece_color,
                 piece_type: PieceType::King,
                 x: position.0,
-                y: position.1
+                y: position.1,
+                taken
             },
         ))
         .with_children(|parent| {
@@ -46,7 +48,8 @@ fn spawn_knight(
     mesh_2: Handle<Mesh>,
     piece_color: PieceColor,
     position: (i8, i8),
-    rotate: bool
+    rotate: bool,
+    taken: bool
 ) {
     commands
         .spawn((
@@ -65,7 +68,8 @@ fn spawn_knight(
                     color: piece_color,
                     piece_type: PieceType::Knight,
                     x: position.0,
-                    y: position.1
+                    y: position.1,
+                    taken
                 },
                 Pickable::IGNORE
             ))
@@ -92,7 +96,8 @@ fn spawn_queen(
     material: Handle<StandardMaterial>,
     mesh: Handle<Mesh>,
     piece_color: PieceColor,
-    position: (i8, i8)
+    position: (i8, i8),
+    taken: bool
 ) {
     commands
         .spawn((
@@ -103,7 +108,8 @@ fn spawn_queen(
                 color: piece_color,
                 piece_type: PieceType::Queen,
                 x: position.0,
-                y: position.1
+                y: position.1,
+                taken
             },
         ))
         .with_children(|parent| {
@@ -122,7 +128,8 @@ fn spawn_bishop(
     mesh: Handle<Mesh>,
     material: Handle<StandardMaterial>,
     piece_color: PieceColor,
-    position: (i8, i8)
+    position: (i8, i8),
+    taken: bool
 ) {
     commands
         .spawn((
@@ -133,7 +140,8 @@ fn spawn_bishop(
                 color: piece_color,
                 piece_type: PieceType::Bishop,
                 x: position.0,
-                y: position.1
+                y: position.1,
+                taken
             },
         ))
         .with_children(|parent| {
@@ -153,7 +161,8 @@ fn spawn_rook(
     mesh: Handle<Mesh>,
     material: Handle<StandardMaterial>,
     piece_color: PieceColor,
-    position: (i8, i8)
+    position: (i8, i8),
+    taken: bool
 ) {
     commands
         .spawn((
@@ -164,7 +173,8 @@ fn spawn_rook(
                 color: piece_color,
                 piece_type: PieceType::Rook,
                 x: position.0,
-                y: position.1
+                y: position.1,
+                taken
             },
         ))
         .with_children(|parent| {
@@ -184,7 +194,8 @@ fn spawn_pawn(
     mesh: Handle<Mesh>,
     material: Handle<StandardMaterial>,
     piece_color: PieceColor,
-    position: (i8, i8)
+    position: (i8, i8),
+    taken: bool
 ) {
     commands
         .spawn((
@@ -195,7 +206,8 @@ fn spawn_pawn(
                 color: piece_color,
                 piece_type: PieceType::Pawn,
                 x: position.0,
-                y: position.1
+                y: position.1,
+                taken
             },
         ))
         .with_children(|parent| {
@@ -214,7 +226,7 @@ pub fn spawn_piece(
     mut commands: Commands,
     material: Handle<StandardMaterial>,
     piece: Piece,
-    piece_handles: PieceHandles
+    piece_handles: PieceHandles,
 ) {
     let position = (piece.x, piece.y);
 
@@ -226,7 +238,8 @@ pub fn spawn_piece(
                 piece_handles.king_handle.clone(),
                 piece_handles.king_cross_handle.clone(), 
                 piece.color, 
-                position
+                position,
+                piece.taken
             );
         }
         PieceType::Queen => {
@@ -235,7 +248,8 @@ pub fn spawn_piece(
                 material, 
                 piece_handles.queen_handle.clone(), 
                 piece.color, 
-                position
+                position,
+                piece.taken
             );
         }
         PieceType::Knight => {
@@ -252,7 +266,8 @@ pub fn spawn_piece(
                 piece_handles.knight_2_handle.clone(), 
                 piece.color, 
                 position,
-                rotate
+                rotate,
+                piece.taken
             );
         }
         PieceType::Bishop => {
@@ -261,7 +276,8 @@ pub fn spawn_piece(
                 piece_handles.bishop_handle.clone(), 
                 material, 
                 piece.color, 
-                position
+                position,
+                piece.taken
             );
         }
         PieceType::Rook => {
@@ -270,7 +286,8 @@ pub fn spawn_piece(
                 piece_handles.rook_handle.clone(), 
                 material, 
                 piece.color, 
-                position
+                position,
+                piece.taken
             );
         }
         PieceType::Pawn => {
@@ -279,7 +296,8 @@ pub fn spawn_piece(
                 piece_handles.pawn_handle.clone(), 
                 material, 
                 piece.color, 
-                position
+                position,
+                piece.taken
             );
         }
     }

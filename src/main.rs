@@ -9,6 +9,7 @@ mod pieces;
 use pieces::*;
 mod ui;
 use ui::*;
+mod player;
 
 
 fn main() {

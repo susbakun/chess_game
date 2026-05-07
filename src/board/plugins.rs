@@ -4,7 +4,7 @@ pub struct SquarePlugin;
 impl Plugin for SquarePlugin {
     fn build(&self, app: &mut App) {
         app
-            .init_resource::<PlayerTurn>()
+            .init_resource::<Player>()
             .init_resource::<SelectedSquare>()
             .init_resource::<SelectedPiece>()
             .init_resource::<SquareMaterials>()

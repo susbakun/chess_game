@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use crate::board::*;
 use crate::pieces::*;
+use crate::player::Player;
 
 pub struct UIPlugin;
 impl Plugin for UIPlugin {
@@ -8,7 +8,7 @@ impl Plugin for UIPlugin {
         app
             .add_systems(Startup, init_next_move_text)
             .add_systems(Update, next_move_text_update
-                .run_if(resource_changed::<PlayerTurn>));
+                .run_if(resource_changed::<Player>));
     }
 }
 // Component to mark the Text entity
@@ -51,7 +51,7 @@ fn init_next_move_text(
 
 /// Update text with the correct turn
 fn next_move_text_update(
-    turn: Res<PlayerTurn>,
+    turn: Res<Player>,
     mut query: Query<(&mut Text, &NextMoveText)>
 ) {
     for (mut text, _tag) in query.iter_mut() {

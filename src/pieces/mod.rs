@@ -50,7 +50,8 @@ pub fn create_pieces(
             color: PieceColor::White, 
             piece_type: PieceType::Rook, 
             x: 0, 
-            y: 0 
+            y: 0,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -62,7 +63,8 @@ pub fn create_pieces(
             color: PieceColor::White, 
             piece_type: PieceType::Knight, 
             x: 0, 
-            y: 1 
+            y: 1,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -74,7 +76,8 @@ pub fn create_pieces(
             color: PieceColor::White, 
             piece_type: PieceType::Bishop, 
             x: 0, 
-            y: 2 
+            y: 2,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -85,8 +88,9 @@ pub fn create_pieces(
         Piece { 
             color: PieceColor::White, 
             piece_type: PieceType::Queen, 
-            x: 0, 
-            y: 3 
+            x: 0,
+            y: 3,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -98,7 +102,8 @@ pub fn create_pieces(
             color: PieceColor::White, 
             piece_type: PieceType::King, 
             x: 0, 
-            y: 4
+            y: 4,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -110,7 +115,8 @@ pub fn create_pieces(
             color: PieceColor::White, 
             piece_type: PieceType::Bishop, 
             x: 0, 
-            y: 5
+            y: 5,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -122,7 +128,8 @@ pub fn create_pieces(
             color: PieceColor::White, 
             piece_type: PieceType::Knight, 
             x: 0, 
-            y: 6
+            y: 6,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -134,7 +141,8 @@ pub fn create_pieces(
             color: PieceColor::White, 
             piece_type: PieceType::Rook, 
             x: 0, 
-            y: 7
+            y: 7,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -147,7 +155,8 @@ pub fn create_pieces(
                 color: PieceColor::White, 
                 piece_type: PieceType::Pawn,
                 x: 1, 
-                y: i 
+                y: i,
+                taken: false
             },
             piece_handles.clone()
         );
@@ -162,7 +171,8 @@ pub fn create_pieces(
             color: PieceColor::Black, 
             piece_type: PieceType::Rook, 
             x: 7,
-            y: 0 
+            y: 0,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -174,7 +184,8 @@ pub fn create_pieces(
             color: PieceColor::Black, 
             piece_type: PieceType::Knight, 
             x: 7, 
-            y: 1 
+            y: 1,
+            taken: false 
         },
         piece_handles.clone()
     );
@@ -186,7 +197,8 @@ pub fn create_pieces(
             color: PieceColor::Black, 
             piece_type: PieceType::Bishop, 
             x: 7, 
-            y: 2 
+            y: 2,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -198,7 +210,8 @@ pub fn create_pieces(
             color: PieceColor::Black, 
             piece_type: PieceType::Queen, 
             x: 7, 
-            y: 3 
+            y: 3,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -210,7 +223,8 @@ pub fn create_pieces(
             color: PieceColor::Black, 
             piece_type: PieceType::King, 
             x: 7, 
-            y: 4
+            y: 4,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -222,7 +236,8 @@ pub fn create_pieces(
             color: PieceColor::Black, 
             piece_type: PieceType::Bishop, 
             x: 7, 
-            y: 5
+            y: 5,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -234,7 +249,8 @@ pub fn create_pieces(
             color: PieceColor::Black, 
             piece_type: PieceType::Knight, 
             x: 7, 
-            y: 6
+            y: 6,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -246,7 +262,8 @@ pub fn create_pieces(
             color: PieceColor::Black, 
             piece_type: PieceType::Rook, 
             x: 7, 
-            y: 7
+            y: 7,
+            taken: false
         },
         piece_handles.clone()
     );
@@ -259,7 +276,8 @@ pub fn create_pieces(
                 color: PieceColor::Black, 
                 piece_type: PieceType::Pawn,
                 x: 6, 
-                y: i 
+                y: i,
+                taken: false
             },
             piece_handles.clone()
         );

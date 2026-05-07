@@ -97,16 +97,6 @@ pub fn despawn_taken_pieces(
     ) in 
         query.iter_mut() 
         {
-            if piece.piece_type == PieceType::King {
-                println!(
-                    "{} won! Thanks for playing!",
-                    match piece.color {
-                        PieceColor::White => "Black",
-                        PieceColor::Black => "White",
-                    }
-                );
-                std::process::exit(0);
-            }
             commands.entity(entity).despawn();
 
             let material = if piece.color == PieceColor::White {

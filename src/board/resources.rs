@@ -1,24 +1,4 @@
 use super::*;
-
-
-#[derive(Resource)]
-pub struct PlayerTurn(pub PieceColor);
-
-impl PlayerTurn {
-    pub fn change(&mut self) {
-        self.0 = match self.0 {
-            PieceColor::White => PieceColor::Black,
-            PieceColor::Black => PieceColor::White
-        }
-    }
-}
-
-impl Default for PlayerTurn {
-    fn default() -> Self {
-        PlayerTurn(PieceColor::White)
-    }
-}
-
 #[derive(Default, Resource)]
 pub struct SelectedSquare {
     pub entity: Option<Entity>
