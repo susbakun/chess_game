@@ -73,14 +73,14 @@ fn spawn_knight(
             parent.spawn((
                 Mesh3d(mesh_1),
                 MeshMaterial3d(material.clone()),
-                Transform::from_translation(vec3(-0.2, 0.0, 0.9))
+                Transform::from_translation(vec3(-0.15, 0.0, 0.85))
                     .with_scale(vec3(0.2, 0.2, 0.2)),
                 Pickable::IGNORE
             ));
             parent.spawn((
                 Mesh3d(mesh_2),
                 MeshMaterial3d(material.clone()),
-                Transform::from_translation(vec3(-0.2, 0.0, 0.9))
+                Transform::from_translation(vec3(-0.15, 0.0, 0.85))
                     .with_scale(vec3(0.2, 0.2, 0.2)),
                 Pickable::IGNORE
             ));

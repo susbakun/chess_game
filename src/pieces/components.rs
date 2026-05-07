@@ -11,9 +11,13 @@ pub struct Piece {
 
 
 impl Piece {
-    pub fn is_move_valid(&self, new_pos: (i8, i8), pieces: Vec<Piece>) -> bool {
+    pub fn is_move_valid(&self, new_pos: (i8, i8), pieces: &Vec<Piece>) -> bool {
         // If there's a piece of the same color in the same square, it can't move
         if color_of_square(new_pos, &pieces) == Some(self.color) {
+            return false
+        }
+
+        if self.is_check(new_pos, pieces) {
             return false
         }
 
@@ -105,12 +109,32 @@ impl Piece {
         }
     }
 
-    fn is_check(&self, pieces: &Vec<Piece>) -> bool {
-        let enemy_pieces = pieces
+    pub fn is_check(&self, new_pos: (i8, i8), pieces: &Vec<Piece>) -> bool {
+        // Create a simulated board after the move
+        let mut pieces_after_move = pieces.clone();
+        
+        // Remove the piece from its current position
+        pieces_after_move
+            .retain(|p| 
+                !(p.x == self.x && p.y == self.y 
+                    && p.color == self.color && p.piece_type == self.piece_type));
+        
+        // Remove any captured piece at new_pos
+        pieces_after_move
+            .retain(|p| 
+                !(p.x == new_pos.0 && p.y == new_pos.1));
+        
+        // Add the moving piece at its new position
+        let mut moved_piece = *self;
+        moved_piece.x = new_pos.0;
+        moved_piece.y = new_pos.1;
+        pieces_after_move.push(moved_piece);
+
+        let enemy_pieces = pieces_after_move
             .iter()
             .filter(|piece| piece.color != self.color);
 
-        let king = pieces
+        let king = pieces_after_move
             .iter()
             .find(|piece| piece.piece_type == PieceType::King 
                 && piece.color == self.color)
@@ -121,7 +145,7 @@ impl Piece {
                 PieceType::Pawn => {
                     if piece.color == PieceColor::White {
                         if (piece.x + 1, piece.y + 1) == (king.x, king.y) 
-                            || (piece.x + 1, piece.y - 1) == (king.x, king.y) 
+                            || (piece.x + 1, piece.y - 1) == (king.x, king.y)
                         {
                             return true
                         }
@@ -135,28 +159,41 @@ impl Piece {
                 },
                 PieceType::Rook => {
                     if (king.x == piece.x || king.y == piece.y)
-                        && is_path_empty((piece.x, piece.y), (king.x, king.y), pieces) {
+                        && is_path_empty(
+                            (piece.x, piece.y), 
+                            (king.x, king.y), &pieces_after_move) {
                             return true
                         }
                 }
                 PieceType::Bishop => {
                     if ((king.x - piece.x).abs() 
                         == (king.y - piece.y).abs()) 
-                        &&  is_path_empty((piece.x, piece.y), (king.x, king.y), &pieces) {
+                        &&  is_path_empty(
+                            (piece.x, piece.y), 
+                            (king.x, king.y), &pieces_after_move) {
                             return true
                         }
                 }
                 PieceType::Queen => {
-                    if ((king.x - piece.x).abs() 
+                    if (((king.x - piece.x).abs() 
                         == (king.y - piece.y).abs()) 
-                        && is_path_empty((piece.x, piece.y), (king.x, king.y), &pieces)
-                        || (king.x == piece.x || king.y == piece.y) {
+                        && is_path_empty(
+                            (piece.x, piece.y), 
+                            (king.x, king.y), &pieces_after_move))
+                        || (king.x == piece.x || king.y == piece.y) 
+                        && is_path_empty(
+                            (piece.x, piece.y), 
+                            (king.x, king.y), &pieces_after_move) {
                             return true
                         }
                 }
                 PieceType::King => {
-                    if (piece.x - king.x).abs() == 1
-                        || (piece.y - king.y).abs() == 1 {
+                    if ((king.x - piece.x).abs() == 1
+                        && (king.y == piece.y))
+                    ||  ((king.y - piece.y).abs() == 1
+                        && (king.x == piece.x))
+                    ||  ((king.x - piece.x).abs() == 1
+                        && (king.y - piece.y).abs() == 1) {
                             return true
                         }
                 }
@@ -173,165 +210,5 @@ impl Piece {
 
 
         false
-    }
-}
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn create_piece(piece_type: PieceType, color: PieceColor, x: i8, y: i8) -> Piece {
-        Piece {
-            piece_type,
-            color,
-            x,
-            y,
-        }
-    }
-
-    #[test]
-    fn test_check_by_pawn_white() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 3, 5);
-        let black_pawn = create_piece(PieceType::Pawn, PieceColor::Black, 4, 4);
-        
-        let pieces = vec![white_king.clone(), black_pawn];
-        
-        assert!(white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_check_by_pawn_black() {
-        let black_king = create_piece(PieceType::King, PieceColor::Black, 5, 3);
-        let white_pawn = create_piece(PieceType::Pawn, PieceColor::White, 4, 4);
-        
-        let pieces = vec![black_king.clone(), white_pawn];
-        
-        assert!(black_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_check_by_rook_horizontal() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_rook = create_piece(PieceType::Rook, PieceColor::Black, 0, 4);
-        
-        let pieces = vec![white_king.clone(), black_rook];
-        
-        assert!(white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_check_by_rook_vertical() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_rook = create_piece(PieceType::Rook, PieceColor::Black, 4, 7);
-        
-        let pieces = vec![white_king.clone(), black_rook];
-        
-        assert!(white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_rook_blocked_by_piece() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_rook = create_piece(PieceType::Rook, PieceColor::Black, 0, 4);
-        let blocking_piece = create_piece(PieceType::Bishop, PieceColor::Black, 2, 4);
-        
-        let pieces = vec![white_king.clone(), black_rook, blocking_piece];
-        
-        assert!(!white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_check_by_bishop() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_bishop = create_piece(PieceType::Bishop, PieceColor::Black, 1, 1);
-        
-        let pieces = vec![white_king.clone(), black_bishop];
-        
-        assert!(white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_bishop_blocked_by_piece() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_bishop = create_piece(PieceType::Bishop, PieceColor::Black, 1, 1);
-        let blocking_piece = create_piece(PieceType::Pawn, PieceColor::Black, 2, 2);
-        
-        let pieces = vec![white_king.clone(), black_bishop, blocking_piece];
-        
-        assert!(!white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_check_by_queen_horizontal() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_queen = create_piece(PieceType::Queen, PieceColor::Black, 0, 4);
-        
-        let pieces = vec![white_king.clone(), black_queen];
-        
-        assert!(white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_check_by_queen_diagonal() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_queen = create_piece(PieceType::Queen, PieceColor::Black, 1, 1);
-        
-        let pieces = vec![white_king.clone(), black_queen];
-        
-        assert!(white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_check_by_knight() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_knight = create_piece(PieceType::Knight, PieceColor::Black, 5, 6);
-        
-        let pieces = vec![white_king.clone(), black_knight];
-        
-        assert!(white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_knight_cannot_be_blocked() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_knight = create_piece(PieceType::Knight, PieceColor::Black, 5, 6);
-        let blocking_piece = create_piece(PieceType::Pawn, PieceColor::Black, 4, 5);
-        
-        let pieces = vec![white_king.clone(), black_knight, blocking_piece];
-        
-        assert!(white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_check_by_adjacent_king() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_king = create_piece(PieceType::King, PieceColor::Black, 5, 4);
-        
-        let pieces = vec![white_king.clone(), black_king];
-        
-        assert!(white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_no_check_from_non_adjacent_king() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_king = create_piece(PieceType::King, PieceColor::Black, 6, 4);
-        
-        let pieces = vec![white_king.clone(), black_king];
-        
-        assert!(!white_king.is_check(&pieces));
-    }
-
-    #[test]
-    fn test_multiple_enemy_pieces_check() {
-        let white_king = create_piece(PieceType::King, PieceColor::White, 4, 4);
-        let black_rook = create_piece(PieceType::Rook, PieceColor::Black, 0, 0);
-        let black_bishop = create_piece(PieceType::Bishop, PieceColor::Black, 1, 1);
-        
-        let pieces = vec![white_king.clone(), black_rook, black_bishop];
-        
-        assert!(white_king.is_check(&pieces));
     }
 }

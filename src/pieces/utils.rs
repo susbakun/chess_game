@@ -36,8 +36,8 @@ pub fn is_path_empty(begin: (i8, i8), end: (i8, i8), pieces: &Vec<Piece>) -> boo
     }
 
     // Diagnols
-    let x_diff = (begin.0 as i8 - end.0 as i8).abs();
-    let y_diff = (begin.1 as i8 - end.1 as i8).abs();
+    let x_diff = (begin.0 - end.0).abs();
+    let y_diff = (begin.1 - end.1).abs();
 
     if x_diff == y_diff {
         for i in 1..x_diff {
@@ -46,7 +46,7 @@ pub fn is_path_empty(begin: (i8, i8), end: (i8, i8), pieces: &Vec<Piece>) -> boo
             } else if begin.0 > end.0 && begin.1 < end.1 {
                 (begin.0 - i, begin.1 + i)
             } else if begin.0 < end.0 && begin.1 > end.1 {
-                (begin.0 + i, begin.0 - i)
+                (begin.0 + i, begin.1 - i)
             } else {
                 (begin.0 - i, begin.1 - i)
             };

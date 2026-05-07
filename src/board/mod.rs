@@ -123,7 +123,7 @@ fn move_piece(
                     return;
             };
 
-            if piece.is_move_valid((square.x, square.y), pieces_vec) 
+            if piece.is_move_valid((square.x, square.y), &pieces_vec) 
                 && piece.color == turn.0
             {
                 for (other_entity, other_piece) in pieces_entity_vec {

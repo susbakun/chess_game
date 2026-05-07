@@ -9,7 +9,7 @@ pub fn render_taken_on_side(
 ) {
     if piece.color == PieceColor::White {
         piece.x = 8 - (gone_count.0 as i8 % 8);
-        piece.y = 8 + (gone_count.0 as i8 / 8);
+        piece.y = 9 + (gone_count.0 as i8 / 8);
 
         spawn_piece(
             commands,
