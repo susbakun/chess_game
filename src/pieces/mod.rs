@@ -5,12 +5,17 @@ mod plugins;
 mod resources;
 mod spawn;
 mod utils;
+mod move_logic;
 
 pub use components::*;
 pub use plugins::*;
 pub use resources::*;
 pub use spawn::*;
 pub use utils::*;
+pub use move_logic::*;
+
+use crate::board::*;
+use crate::player::*;
 
 
 
