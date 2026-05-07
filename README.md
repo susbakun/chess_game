@@ -38,7 +38,7 @@ cargo run --release
 - [ ] Multiplayer support
 - [ ] Adding chess engine
 - [x] Implement a system that keeps track of the taken pieces and displays them, maybe in UI or as objects next to the board.
-- [ ] Finish implementing all the rules: castling, en passant, check mates, etc.
+- [ ] Finish implementing all the rules: castling, check mates.
 - [ ] Try moving the camera around!.
 - [ ] Show the result on the UI (instead of console)
 - [ ] WASM
