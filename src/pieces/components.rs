@@ -17,6 +17,7 @@ impl Piece {
             return false
         }
 
+        // rules
         match self.piece_type {
             PieceType::King => {
                 // Horizontal

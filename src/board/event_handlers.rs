@@ -83,7 +83,6 @@ pub fn on_sqaure_click(
     }
 }
 
-
 pub fn despawn_taken_pieces(
     mut commands: Commands,
     materials: Res<SquareMaterials>,
