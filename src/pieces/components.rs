@@ -1,9 +1,11 @@
 use super::*;
+
 use crate::player::*;
+use crate::constants::*;
 
 
 
-#[derive(Component, Clone, Copy)]
+#[derive(Component, Clone, Copy, Debug)]
 pub struct Piece {
     pub color: PieceColor,
     pub piece_type: PieceType,
@@ -40,7 +42,9 @@ impl Piece {
                     && (self.x == new_pos.0))
                 // Diagonal
                 ||  ((self.x - new_pos.0).abs() == 1
-                    && (self.y - new_pos.1).abs() == 1)
+                    && (self.y - new_pos.1).abs() == 1) 
+                // checking castling rule
+                ||  self.castling_rule(new_pos, &player, pieces)
             }
             PieceType::Queen => {
                 is_path_empty((self.x, self.y), new_pos, &pieces)
@@ -139,5 +143,118 @@ impl Piece {
         pieces_after_move.push(moved_piece);
 
         pieces_after_move
+    }
+
+    pub fn castling_rule(
+        &self, 
+        new_pos: (i8, i8), 
+        player: &Player, 
+        pieces: &Vec<Piece>
+    ) -> bool {
+        if player.is_check(&pieces) {
+            return false
+        }
+
+        
+        if !is_path_empty((self.x, self.y), new_pos, &pieces) {
+            return false
+        }
+        
+        if self.color == PieceColor::White {
+            if (self.x, self.y) == 
+                (INITIAL_WHITE_KING_POS.0, INITIAL_WHITE_KING_POS.1){
+                    if new_pos == (0, 2) 
+                    && self.piece_at(
+                        INITIAL_WHITE_ROOK_POS1, 
+                        &pieces).is_some() {
+                            return true
+                } else if new_pos == (0, 6)
+                    && self.piece_at(
+                        INITIAL_WHITE_ROOK_POS2, 
+                        &pieces).is_some() {
+                            return true
+                }
+            }
+        } else {
+            if (self.x, self.y) == 
+                (INITIAL_BLACK_KING_POS.0, INITIAL_BLACK_KING_POS.1){
+                    if new_pos == (7, 2) 
+                        && self.piece_at(
+                            INITIAL_BLACK_ROOK_POS1, 
+                            &pieces).is_some() {
+                                return true
+                    } else if new_pos == (7, 6)
+                        && self.piece_at(
+                            INITIAL_BLACK_ROOK_POS2, 
+                            &pieces).is_some() {
+                                return true
+                    }
+            }
+        }
+
+
+        false
+    }
+
+
+    fn piece_at(
+        &self, 
+        pos: (i8, i8), 
+        pieces: &Vec<Piece>
+    ) -> Option<Piece> {
+
+        let piece = pieces
+            .iter()
+            .find(|p| p.color == self.color 
+                && (p.x, p.y) == pos)
+            .map(|p| *p);
+
+        piece
+    }
+
+    pub fn find_castle_in_castling_move(
+        &self, 
+        pos: (i8, i8), 
+        pieces: &Vec<Piece>
+    ) -> Option<Piece> {
+        let rook_pos: (i8, i8);
+
+        if self.color == PieceColor::White {
+            rook_pos = if pos.1 > self.y {
+                INITIAL_WHITE_ROOK_POS2
+            } else {
+                INITIAL_WHITE_ROOK_POS1
+            };
+        } else {
+            rook_pos = if pos.1 > self.y {
+                INITIAL_BLACK_ROOK_POS2
+            } else {
+                INITIAL_BLACK_ROOK_POS1
+            };
+        }
+
+        match self.piece_at(rook_pos, pieces) {
+            Some(piece) 
+                if piece.piece_type == PieceType::Rook => Some(piece),
+            _ => None
+        }
+    }
+
+    pub fn find_pos_for_castle(&self, new_pos: (i8, i8)) -> (i8, i8) {
+        let is_king_side = is_king_side_castling(new_pos);
+
+        if self.color == PieceColor::White {
+            if is_king_side {
+                (0, 5)
+            } else {
+                (0, 3)
+            }
+        } else {
+            if is_king_side {
+                (7, 5)
+            } else {
+                (7, 3)
+            }
+        }
     }
 }

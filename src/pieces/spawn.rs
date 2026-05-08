@@ -182,7 +182,7 @@ fn spawn_rook(
                 Mesh3d(mesh),
                 MeshMaterial3d(material),
                 Transform::from_translation(
-                    vec3(-0.1, 0.0, 1.9)
+                    vec3(-0.05, 0.0, 1.8)
                 ).with_scale(vec3(0.2, 0.2, 0.2)),
                 Pickable::IGNORE
             ));

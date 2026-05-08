@@ -59,3 +59,11 @@ pub fn is_path_empty(begin: (i8, i8), end: (i8, i8), pieces: &Vec<Piece>) -> boo
 
     true
 }
+
+
+pub fn is_king_side_castling(pos: (i8, i8)) -> bool {
+    // checking two positions that a king would
+    // go to for king-side castling
+
+    pos == (0, 6) || pos == (7, 6)
+}

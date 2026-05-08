@@ -98,10 +98,12 @@ impl Player {
     }
 
 
-    pub fn is_check_mate(&self, pieces: &Vec<Piece>) -> bool {
+    pub fn is_check_mate(&self, pieces: &mut Vec<Piece>) -> bool {
         if !self.is_check(pieces) {
             return false
         }
+
+        let mut pieces_clone = pieces.clone();
 
         for piece in pieces {
             if piece.color != self.0{
@@ -117,7 +119,7 @@ impl Player {
                         continue;
                     }
                     
-                    if piece.is_move_valid(new_pos, self, pieces) {
+                    if piece.is_move_valid(new_pos, self, &mut pieces_clone) {
                         return false
                     }
     

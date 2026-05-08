@@ -19,7 +19,7 @@ use crate::player::*;
 
 
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum PieceColor {
     White,
     Black

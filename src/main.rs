@@ -10,6 +10,7 @@ use pieces::*;
 mod ui;
 use ui::*;
 mod player;
+mod constants;
 
 
 fn main() {
