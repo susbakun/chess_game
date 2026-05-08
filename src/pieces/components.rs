@@ -163,12 +163,12 @@ impl Piece {
         if self.color == PieceColor::White {
             if (self.x, self.y) == 
                 (INITIAL_WHITE_KING_POS.0, INITIAL_WHITE_KING_POS.1){
-                    if new_pos == (0, 2) 
+                    if new_pos == WHITE_KING_POS_QUEEN_SIDE_CASTLING
                     && self.piece_at(
                         INITIAL_WHITE_ROOK_POS1, 
                         &pieces).is_some() {
                             return true
-                } else if new_pos == (0, 6)
+                } else if new_pos == WHITE_KING_POS_KING_SIDE_CASTLING
                     && self.piece_at(
                         INITIAL_WHITE_ROOK_POS2, 
                         &pieces).is_some() {
@@ -178,12 +178,12 @@ impl Piece {
         } else {
             if (self.x, self.y) == 
                 (INITIAL_BLACK_KING_POS.0, INITIAL_BLACK_KING_POS.1){
-                    if new_pos == (7, 2) 
+                    if new_pos == BLACK_KING_POS_QUEEN_SIDE_CASTLING
                         && self.piece_at(
                             INITIAL_BLACK_ROOK_POS1, 
                             &pieces).is_some() {
                                 return true
-                    } else if new_pos == (7, 6)
+                    } else if new_pos == BLACK_KING_POS_KING_SIDE_CASTLING
                         && self.piece_at(
                             INITIAL_BLACK_ROOK_POS2, 
                             &pieces).is_some() {
@@ -220,13 +220,13 @@ impl Piece {
         let rook_pos: (i8, i8);
 
         if self.color == PieceColor::White {
-            rook_pos = if pos.1 > self.y {
+            rook_pos = if is_king_side_castling(pos) {
                 INITIAL_WHITE_ROOK_POS2
             } else {
                 INITIAL_WHITE_ROOK_POS1
             };
         } else {
-            rook_pos = if pos.1 > self.y {
+            rook_pos = if is_king_side_castling(pos) {
                 INITIAL_BLACK_ROOK_POS2
             } else {
                 INITIAL_BLACK_ROOK_POS1
@@ -235,7 +235,8 @@ impl Piece {
 
         match self.piece_at(rook_pos, pieces) {
             Some(piece) 
-                if piece.piece_type == PieceType::Rook => Some(piece),
+                if piece.piece_type == PieceType::Rook => 
+                    Some(piece),
             _ => None
         }
     }
@@ -245,15 +246,15 @@ impl Piece {
 
         if self.color == PieceColor::White {
             if is_king_side {
-                (0, 5)
+                WHITE_ROOK_POS_KING_SIDE_CASTLING
             } else {
-                (0, 3)
+                WHITE_ROOK_POS_QUEEN_SIDE_CASTLING
             }
         } else {
             if is_king_side {
-                (7, 5)
+                BLACK_ROOK_POS_KING_SIDE_CASTLING
             } else {
-                (7, 3)
+                BLACK_ROOK_POS_QUEEN_SIDE_CASTLING
             }
         }
     }
