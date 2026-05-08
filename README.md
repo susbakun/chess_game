@@ -9,7 +9,7 @@ A chess game written in Rust and Bevy.
 
 ## Features
 
-- Full chess rule implementation(except the ones in the [todo section](#todo))
+- Full chess rule implementation
 - Interactive piece movement and capture
 - Move validation and turn-based gameplay
 - Clean UI
