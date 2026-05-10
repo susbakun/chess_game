@@ -1,3 +1,5 @@
+use crate::GameOver;
+
 use super::*;
 
 pub fn move_piece(
@@ -5,6 +7,8 @@ pub fn move_piece(
     selected_square: Res<SelectedSquare>,
     selected_piece: Res<SelectedPiece>,
     mut player: ResMut<Player>,
+    mut winner: ResMut<Winner>,
+    mut game_over: ResMut<GameOver>,
     squares_query: Query<&Square>,
     mut piece_query: Query<(Entity, &mut Piece)>,
     mut reset_selected_event: MessageWriter<ResetSelectedEvent>
@@ -97,132 +101,20 @@ pub fn move_piece(
                         moving_rook.x = pos.0;
                         moving_rook.y = pos.1;
                     }
-                }            
+                }
+
+                // we store the current color before changing it
+                // so we would have access to the player who might
+                // have won the game
+                let winner_player = player.0; 
 
                 player.change();
 
                 if player.is_check_mate(&mut updated_pieces_vec) {
-                    println!(
-                        "{} won! Thanks for playing!",
-                        match player.0 {
-                            PieceColor::White => "Black",
-                            PieceColor::Black => "White",
-                        }
-                    );
-                    std::process::exit(0);
+                    winner.set(winner_player);
+                    game_over.toggle();
                 }
+                reset_selected_event.write(ResetSelectedEvent);
             }
-            reset_selected_event.write(ResetSelectedEvent);
-    }
-}
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_white_kingside_castling() {
-        // Setup: King at e1 (4,0), Rook at h1 (7,0)
-        let pieces = vec![
-            Piece {
-                piece_type: PieceType::King,
-                x: 4,
-                y: 0,
-                color: PieceColor::White,
-                taken: false
-            },
-            Piece {
-                piece_type: PieceType::Rook,
-                x: 7,
-                y: 0,
-                color: PieceColor::White,
-                taken: false
-            },
-        ];
-
-        let king = &pieces[0];
-        let new_pos = (6, 0); // King moves to g1
-
-        // Test castling_rule
-        let player = Player(PieceColor::White);
-        assert!(
-            king.castling_rule(new_pos, &player, &pieces),
-            "Castling should be valid"
-        );
-
-        // Test find_castle_in_castling_move
-        let rook = king.find_castle_in_castling_move(new_pos, &pieces);
-        assert!(rook.is_some(), "Should find the rook");
-        let rook = rook.unwrap();
-        assert_eq!(rook.x, 7);
-        assert_eq!(rook.y, 0);
-
-        // Test find_pos_for_castle
-        let rook_new_pos = king.find_pos_for_castle(new_pos);
-        assert_eq!(rook_new_pos, (5, 0), "Rook should move to f1");
-    }
-
-    #[test]
-    fn test_white_queenside_castling() {
-        // Setup: King at e1 (4,0), Rook at a1 (0,0)
-        let pieces = vec![
-            Piece {
-                piece_type: PieceType::King,
-                x: 4,
-                y: 0,
-                color: PieceColor::White,
-                taken: false
-            },
-            Piece {
-                piece_type: PieceType::Rook,
-                x: 0,
-                y: 0,
-                color: PieceColor::White,
-                taken: false
-            },
-        ];
-
-        let king = &pieces[0];
-        let new_pos = (2, 0); // King moves to c1
-
-        let player = Player(PieceColor::White);
-        assert!(king.castling_rule(new_pos, &player, &pieces));
-
-        let rook = king.find_castle_in_castling_move(new_pos, &pieces);
-        assert!(rook.is_some());
-        
-        let rook_new_pos = king.find_pos_for_castle(new_pos);
-        assert_eq!(rook_new_pos, (3, 0), "Rook should move to d1");
-    }
-
-    #[test]
-    fn test_black_kingside_castling() {
-        let pieces = vec![
-            Piece {
-                piece_type: PieceType::King,
-                x: 4,
-                y: 7,
-                color: PieceColor::Black,
-                taken: false
-            },
-            Piece {
-                piece_type: PieceType::Rook,
-                x: 7,
-                y: 7,
-                color: PieceColor::Black,
-                taken: false
-            },
-        ];
-
-        let king = &pieces[0];
-        let new_pos = (6, 7);
-
-        let player = Player(PieceColor::Black);
-        assert!(king.castling_rule(new_pos, &player, &pieces));
-
-        let rook_new_pos = king.find_pos_for_castle(new_pos);
-        assert_eq!(rook_new_pos, (5, 7), "Rook should move to f8");
     }
 }

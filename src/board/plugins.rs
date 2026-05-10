@@ -5,6 +5,7 @@ impl Plugin for SquarePlugin {
     fn build(&self, app: &mut App) {
         app
             .init_resource::<Player>()
+            .init_resource::<Winner>()
             .init_resource::<SelectedSquare>()
             .init_resource::<SelectedPiece>()
             .init_resource::<SquareMaterials>()

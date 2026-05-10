@@ -1,25 +1,9 @@
-use bevy::prelude::*;
-use crate::pieces::*;
-use crate::player::Player;
-
-pub struct UIPlugin;
-impl Plugin for UIPlugin {
-    fn build(&self, app: &mut App) {
-        app
-            .add_systems(Startup, init_next_move_text)
-            .add_systems(Update, next_move_text_update
-                .run_if(resource_changed::<Player>));
-    }
-}
-// Component to mark the Text entity
-#[derive(Component)]
-struct NextMoveText;
-
+use super::*;
 
 /// Initialize UiCamera and text
-fn init_next_move_text(
+pub fn init_next_move_text(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
+    asset_server: Res<AssetServer>
 ) {
     let font = asset_server.load(
         "fonts/FiraSans-Bold.ttf"
@@ -50,7 +34,7 @@ fn init_next_move_text(
 
 
 /// Update text with the correct turn
-fn next_move_text_update(
+pub fn next_move_text_update(
     turn: Res<Player>,
     mut query: Query<(&mut Text, &NextMoveText)>
 ) {

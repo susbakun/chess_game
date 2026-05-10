@@ -134,6 +134,21 @@ impl Player {
 
 impl Default for Player {
     fn default() -> Self {
-        Player(PieceColor::White)
+        Self(PieceColor::White)
+    }
+}
+
+
+#[derive(Resource)]
+pub struct Winner(pub PieceColor);
+impl Winner {
+    pub fn set(&mut self, winner: PieceColor) {
+        self.0 = winner;
+    }
+}
+
+impl Default for Winner {
+    fn default() -> Self {
+        Self(PieceColor::White)
     }
 }

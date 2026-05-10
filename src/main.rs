@@ -12,9 +12,13 @@ use ui::*;
 mod player;
 mod constants;
 
+mod game_over;
+pub use game_over::*;
+
 
 fn main() {
     App::new()
+        .init_resource::<GameOver>()
         .add_systems(Startup, setup)
         .add_systems(
             PreUpdate,

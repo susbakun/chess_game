@@ -45,3 +45,8 @@ impl FromWorld for PieceHandles {
         }
     }
 }
+
+
+// counting removed pieces (whites, blacks)
+#[derive(Resource, Default)]
+pub struct GoneCount(pub u8, pub u8);
