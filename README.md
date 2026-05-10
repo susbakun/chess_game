@@ -40,7 +40,8 @@ cargo run --release
 - [x] Implement a system that keeps track of the taken pieces and displays them, maybe in UI or as objects next to the board.
 - [x] Finish implementing all the rules: castling, check mates.
 - [ ] Try moving the camera around!.
-- [ ] Show the result on the UI (instead of console)
+- [x] Show the result on the UI (instead of console).
+- [] Replay button when the game's over.
 - [ ] WASM
 
 ## Development
