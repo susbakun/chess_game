@@ -1,5 +1,6 @@
 #![warn(clippy::all, clippy::pedantic)]
 use bevy::dev_tools::picking_debug::{DebugPickingMode, DebugPickingPlugin};
+use bevy::input_focus::InputFocus;
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
 
@@ -19,6 +20,7 @@ pub use game_over::*;
 fn main() {
     App::new()
         .init_resource::<GameOver>()
+        .init_resource::<InputFocus>()
         .add_systems(Startup, setup)
         .add_systems(
             PreUpdate,

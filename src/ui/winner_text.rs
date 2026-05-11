@@ -1,7 +1,7 @@
 use super::*;
 
 
-/// show text with the correct winner
+/// initilizing the end screen
 pub fn init_winner_text(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -17,6 +17,8 @@ pub fn init_winner_text(
         height: Val::Percent(100.0),
         justify_content: JustifyContent::Center,
         align_items: AlignItems::Center,
+        flex_direction: FlexDirection::Column,
+        row_gap: Val::Px(20.0),
         ..Default::default()
     },
     BackgroundColor(Color::srgba(
@@ -25,12 +27,11 @@ pub fn init_winner_text(
         0.0, 
         0.0
     )),
-    Visibility::Hidden,
     GameOverScreen
     ))
     .with_children(|parent| {
         parent.spawn((
-            Text::new(""),
+            Text::new("White won"),
             TextFont {
                 font,
                 font_size: 60.0,
@@ -42,6 +43,11 @@ pub fn init_winner_text(
                 0.8)),
             WinnerText,
         ));
+
+        let replay_button_bundle = 
+            create_replay_button(asset_server);
+
+        parent.spawn(replay_button_bundle);
     });
 }
 

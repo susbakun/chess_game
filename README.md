@@ -42,6 +42,7 @@ cargo run --release
 - [ ] Try moving the camera around!.
 - [x] Show the result on the UI (instead of console).
 - [] Replay button when the game's over.
+- [] Play with timer
 - [ ] WASM
 
 ## Development
