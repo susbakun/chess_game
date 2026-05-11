@@ -27,6 +27,7 @@ pub fn init_winner_text(
         0.0, 
         0.0
     )),
+    Visibility::Hidden,
     GameOverScreen
     ))
     .with_children(|parent| {
@@ -54,16 +55,19 @@ pub fn init_winner_text(
 
 /// Update text with the correct turn
 pub fn show_winner_text(
-    game_over: Res<GameOver>,
-    winner: Res<Winner>,
+    game_state: Res<GameState>,
     mut text_query: Query<(&mut Text, &WinnerText)>,
     mut background_query: Query<(&mut BackgroundColor, &GameOverScreen, &mut Visibility)>
 ) {
-    if !game_over.0 {
+    let (game_over, winner) = 
+        (game_state.game_over, game_state.winner);
+
+    if !game_over {
         return
     }
 
-    for (mut bg_color, _tag, mut visiblity) in 
+    if let Some(winner) = winner {
+        for (mut bg_color, _tag, mut visiblity) in 
         background_query.iter_mut() {
             bg_color.0 = Color::srgba(
                 0.0, 
@@ -73,17 +77,18 @@ pub fn show_winner_text(
             );
 
             *visiblity = Visibility::Visible;
-    }
+        }
 
-    let winner_text = match winner.0 {
-        PieceColor::White => "White won",
-        PieceColor::Black => "Black won"
-    };
+        let winner_text = match winner {
+            PieceColor::White => "White won",
+            PieceColor::Black => "Black won"
+        };
 
 
 
-    for (mut text, _tag) in 
-        text_query.iter_mut() {
-            text.0 = winner_text.to_string();
+        for (mut text, _tag) in 
+            text_query.iter_mut() {
+                text.0 = winner_text.to_string();
+        }   
     }
 }

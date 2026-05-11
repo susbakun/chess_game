@@ -1,4 +1,4 @@
-use crate::GameOver;
+use crate::game_state::GameState;
 
 use super::*;
 
@@ -6,9 +6,7 @@ pub fn move_piece(
     mut commands: Commands,
     selected_square: Res<SelectedSquare>,
     selected_piece: Res<SelectedPiece>,
-    mut player: ResMut<Player>,
-    mut winner: ResMut<Winner>,
-    mut game_over: ResMut<GameOver>,
+    mut game_state: ResMut<GameState>,
     squares_query: Query<&Square>,
     mut piece_query: Query<(Entity, &mut Piece)>,
     mut reset_selected_event: MessageWriter<ResetSelectedEvent>
@@ -28,6 +26,7 @@ pub fn move_piece(
     };
 
     let new_pos = (square.x, square.y);
+    let player = &game_state.player;
 
     if let Some(selected_piece) = 
         selected_piece.entity {
@@ -106,15 +105,33 @@ pub fn move_piece(
                 // we store the current color before changing it
                 // so we would have access to the player who might
                 // have won the game
-                let winner_player = player.0; 
+                let winner_player = player.0;
 
-                player.change();
+                game_state.change_turn();
+
+                // retrieve the next player
+                let player = &game_state.player;
 
                 if player.is_check_mate(&mut updated_pieces_vec) {
-                    winner.set(winner_player);
-                    game_over.toggle();
+                    game_state.set_winner(winner_player);
+                    game_state.toggle_game_over();
                 }
                 reset_selected_event.write(ResetSelectedEvent);
             }
+    }
+}
+
+
+pub fn move_pieces(time: Res<Time>, mut query: Query<(&mut Transform, &Piece)>) {
+    for (mut transform, piece) in query.iter_mut() {
+        let direction = vec3(piece.x as f32, 0.0, piece.y as f32) - transform.translation;
+
+        // Only move if the piece isn't already there (distance is big)
+        if direction.length() > 0.1 {
+            transform.translation += 
+                direction.normalize() * 
+                time.delta_secs() * 
+                vec3(2.0, 2.0, 2.0);
+        }
     }
 }

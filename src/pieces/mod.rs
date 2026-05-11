@@ -15,7 +15,6 @@ pub use utils::*;
 pub use move_logic::*;
 
 use crate::board::*;
-use crate::player::*;
 use crate::constants::*;
 
 
@@ -288,19 +287,5 @@ pub fn create_pieces(
             },
             piece_handles.clone()
         );
-    }
-}
-
-fn move_pieces(time: Res<Time>, mut query: Query<(&mut Transform, &Piece)>) {
-    for (mut transform, piece) in query.iter_mut() {
-        let direction = vec3(piece.x as f32, 0.0, piece.y as f32) - transform.translation;
-
-        // Only move if the piece isn't already there (distance is big)
-        if direction.length() > 0.1 {
-            transform.translation += 
-                direction.normalize() * 
-                time.delta_secs() * 
-                vec3(2.0, 2.0, 2.0);
-        }
     }
 }

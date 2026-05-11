@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::pieces::*;
-use crate::player::*;
+use crate::game_state::*;
 
 mod components;
 mod plugins;

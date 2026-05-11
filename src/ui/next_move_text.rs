@@ -35,13 +35,13 @@ pub fn init_next_move_text(
 
 /// Update text with the correct turn
 pub fn next_move_text_update(
-    turn: Res<Player>,
+    game_state: Res<GameState>,
     mut query: Query<(&mut Text, &NextMoveText)>
 ) {
     for (mut text, _tag) in query.iter_mut() {
         text.0 = format!(
             "Next move: {}",
-            match turn.0 {
+            match game_state.player.0 {
                 PieceColor::White => "White",
                 PieceColor::Black => "Black"
             }

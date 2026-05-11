@@ -1,19 +1,10 @@
 use crate::pieces::*;
 use bevy::prelude::*;
 
-#[derive(Resource)]
 pub struct Player(pub PieceColor);
 
 
 impl Player {
-    pub fn change(&mut self) {
-        self.0 = match self.0 {
-            PieceColor::White => PieceColor::Black,
-            PieceColor::Black => PieceColor::White
-        }
-    }
-
-
     pub fn is_check(&self, pieces: &Vec<Piece>) -> bool {
         let enemy_pieces = pieces
             .iter()
@@ -133,21 +124,6 @@ impl Player {
 
 
 impl Default for Player {
-    fn default() -> Self {
-        Self(PieceColor::White)
-    }
-}
-
-
-#[derive(Resource)]
-pub struct Winner(pub PieceColor);
-impl Winner {
-    pub fn set(&mut self, winner: PieceColor) {
-        self.0 = winner;
-    }
-}
-
-impl Default for Winner {
     fn default() -> Self {
         Self(PieceColor::White)
     }

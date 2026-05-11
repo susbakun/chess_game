@@ -87,9 +87,11 @@ pub fn despawn_taken_pieces(
     mut commands: Commands,
     materials: Res<SquareMaterials>,
     piece_handles: Res<PieceHandles>,
-    mut gone_count: ResMut<GoneCount>,
+    mut game_state: ResMut<GameState>,
     mut query: Query<(Entity, &mut Piece, &Taken)>
 ) {
+    let mut removed_count = game_state.removed_counts;
+
     for (
         entity, 
         piece, 
@@ -100,10 +102,10 @@ pub fn despawn_taken_pieces(
             commands.entity(entity).despawn();
 
             let material = if piece.color == PieceColor::White {
-                gone_count.0 += 1;
+                game_state.removed_counts.0 += 1;
                 materials.white_color.clone()
             } else {
-                gone_count.1 += 1;
+                game_state.removed_counts.1 += 1;
                 materials.black_color.clone()
             };
             
@@ -111,7 +113,7 @@ pub fn despawn_taken_pieces(
                 commands.reborrow(),
                 *piece,
                 material,
-                (gone_count.0, gone_count.1),
+                game_state.removed_counts,
                 piece_handles.clone()
             );
     }

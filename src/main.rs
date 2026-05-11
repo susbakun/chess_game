@@ -12,14 +12,13 @@ mod ui;
 use ui::*;
 mod player;
 mod constants;
-
-mod game_over;
-pub use game_over::*;
+mod game_state;
+use game_state::*;
 
 
 fn main() {
     App::new()
-        .init_resource::<GameOver>()
+        .init_resource::<GameState>()
         .init_resource::<InputFocus>()
         .add_systems(Startup, setup)
         .add_systems(
