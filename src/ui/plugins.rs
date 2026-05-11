@@ -9,7 +9,10 @@ impl Plugin for UIPlugin {
             .add_systems(Startup, init_winner_text)
             .add_systems(Update, next_move_text_update
                 .run_if(resource_changed::<GameState>))
-            .add_systems(Update, show_winner_text)
+            .add_systems(Update, show_winner_text
+                .run_if(resource_changed::<GameState>))
+            .add_systems(Update, hide_winner_text
+                .run_if(resource_changed::<GameState>))
             .add_systems(Update, button_system);
     }
 }

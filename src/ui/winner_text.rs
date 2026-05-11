@@ -92,3 +92,18 @@ pub fn show_winner_text(
         }   
     }
 }
+
+
+pub fn hide_winner_text(
+    game_state: Res<GameState>,
+    mut background_query: Query<(&mut Visibility, &GameOverScreen)>
+) {
+    let game_over = game_state.game_over;
+
+    if !game_over {
+        for (mut visibility, _) in background_query.iter_mut() {
+            *visibility = Visibility::Hidden;
+        }
+        return
+    }
+}

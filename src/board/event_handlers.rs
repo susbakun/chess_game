@@ -90,7 +90,6 @@ pub fn despawn_taken_pieces(
     mut game_state: ResMut<GameState>,
     mut query: Query<(Entity, &mut Piece, &Taken)>
 ) {
-    let mut removed_count = game_state.removed_counts;
 
     for (
         entity, 

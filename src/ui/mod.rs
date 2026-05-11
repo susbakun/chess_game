@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use crate::pieces::*;
 use crate::constants::*;
 use crate::game_state::*;
+use crate::replay::*;
 
 mod next_move_text;
 use next_move_text::*;

@@ -20,7 +20,7 @@ pub use event_handlers::*;
 use utils::*;
 use select::*;
 
-fn create_board(
+pub fn create_board(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     materials: Res<SquareMaterials>

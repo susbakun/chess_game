@@ -47,8 +47,9 @@ pub fn button_system(
         &mut BorderColor,
         &mut Button,
     ),
-    Changed<Interaction>
-    >
+    Changed<Interaction>,
+    >,
+    mut replay_event_writer: MessageWriter<ReplayEvent>
 ) {
     for (entity, interaction, mut bg_color, 
         mut border_color, mut button) in 
@@ -73,7 +74,8 @@ pub fn button_system(
                     // the button's state when the `Button` 
                     // component is marked as changed.
                     button.set_changed();
-                    restart_game();
+
+                    replay_event_writer.write(ReplayEvent);
                 }
                 Interaction::None => {
                     input_focus.clear();
@@ -87,9 +89,4 @@ pub fn button_system(
                 }
             }
     }
-}
-
-
-fn restart_game() {
-
 }

@@ -14,12 +14,15 @@ mod player;
 mod constants;
 mod game_state;
 use game_state::*;
+mod replay;
+use replay::*;
 
 
 fn main() {
     App::new()
         .init_resource::<GameState>()
         .init_resource::<InputFocus>()
+        .insert_resource(DebugPickingMode::Normal)
         .add_systems(Startup, setup)
         .add_systems(
             PreUpdate,
@@ -34,6 +37,7 @@ fn main() {
                 KeyCode::F3,
             )),
         )
+        .add_systems(Update, replay)
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 resolution: WindowResolution::new(
@@ -49,12 +53,12 @@ fn main() {
         .add_plugins(SquarePlugin)
         .add_plugins(PiecePlugin)
         .add_plugins(UIPlugin)
-        .insert_resource(DebugPickingMode::Normal)
+        .add_message::<ReplayEvent>()
         .run();
 }
 
 
-fn setup(mut commands: Commands,) {
+pub fn setup(mut commands: Commands,) {
     commands
         .spawn((
             Camera3d::default(),
