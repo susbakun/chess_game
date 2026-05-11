@@ -39,9 +39,8 @@ cargo run --release
 - [ ] Adding chess engine
 - [x] Implement a system that keeps track of the taken pieces and displays them, maybe in UI or as objects next to the board.
 - [x] Finish implementing all the rules: castling, check mates.
-- [ ] Try moving the camera around!.
 - [x] Show the result on the UI (instead of console).
-- [ ] Replay button when the game's over.
+- [x] Replay button when the game's over.
 - [ ] Play with timer
 - [ ] WASM
 
