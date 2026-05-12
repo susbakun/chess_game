@@ -1,4 +1,0 @@
-[source.persian-rust]
-registry = "sparse+https://index.rust-meetup.ir/"
-[source.crates-io]
-replace-with = "persian-rust"
