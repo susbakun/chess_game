@@ -42,7 +42,7 @@ cargo run --release
 - [x] Show the result on the UI (instead of console).
 - [x] Replay button when the game's over.
 - [ ] Play with timer
-- [ ] WASM
+- [x] WASM
 
 ## Development
 
