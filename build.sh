@@ -26,7 +26,16 @@ cat > web/index.html << 'EOF'
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess Game</title>
     <style>
-        body { margin: 0; padding: 0; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         canvas { display: block; }
     </style>
 </head>
