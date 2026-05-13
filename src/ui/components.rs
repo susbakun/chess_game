@@ -12,3 +12,16 @@ pub struct WinnerText;
 
 #[derive(Component)]
 pub struct GameOverScreen;
+#[derive(Component)]
+pub struct ReplayButton;
+
+
+#[derive(Component)]
+pub struct MenuScreen;
+#[derive(Component)]
+pub struct PlayWithAiButton;
+
+#[derive(Component)]
+pub struct PlayOfflineButton;
+#[derive(Component)]
+pub struct ExitButton;

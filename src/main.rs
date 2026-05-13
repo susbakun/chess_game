@@ -16,13 +16,14 @@ mod game_state;
 use game_state::*;
 mod replay;
 use replay::*;
+mod engine;
 
 
 fn main() {
     App::new()
         .init_resource::<GameState>()
         .init_resource::<InputFocus>()
-        .insert_resource(DebugPickingMode::Normal)
+        .insert_resource(DebugPickingMode::Disabled)
         .add_systems(Startup, setup)
         .add_systems(
             PreUpdate,

@@ -4,15 +4,16 @@ use bevy::color::palettes::css::{BLACK, BLUE, WHITE};
 use super::*;
 
 
-/// seting up the replay button
-pub fn create_replay_button(
-    asset_server: Res<AssetServer>,
-) -> impl Bundle {
+pub fn create_end_menu_buttons(
+    parent: &mut RelatedSpawnerCommands<'_, ChildOf>,
+    asset_server: Res<AssetServer>
+){
     let font = asset_server.load(
         "fonts/FiraSans-Bold.ttf"
     );
 
-    (
+    parent.spawn((
+        ReplayButton,
         Button,
         Node {
             width: Val::Px(150.0),
@@ -23,7 +24,7 @@ pub fn create_replay_button(
             border_radius: BorderRadius::all(Val::Px(5.0)),
             ..Default::default()
         },
-        BackgroundColor(NORMAL_BUTTON),
+        BackgroundColor(NORMAL_END_MENU_BUTTON),
         BorderColor::all(Color::WHITE),
         children![
             Text::new("Repaly"),
@@ -35,10 +36,10 @@ pub fn create_replay_button(
             TextColor(Color::WHITE),
             TextShadow::default(),
         ]
-    )
+    ));    
 }
 
-pub fn button_system(
+pub fn end_menu_buttons_interactions_system(
     mut input_focus: ResMut<InputFocus>,
     mut interaction_query: Query<(
         Entity,
@@ -47,9 +48,11 @@ pub fn button_system(
         &mut BorderColor,
         &mut Button,
     ),
-    Changed<Interaction>,
+    (
+        Changed<Interaction>, 
+        With<ReplayButton>
+    )
     >,
-    mut replay_event_writer: MessageWriter<ReplayEvent>
 ) {
     for (entity, interaction, mut bg_color, 
         mut border_color, mut button) in 
@@ -57,7 +60,7 @@ pub fn button_system(
             match *interaction {
                 Interaction::Hovered => {
                     input_focus.set(entity);
-                    *bg_color = HOVERED_BUTTON.into();
+                    *bg_color = HOVERED_END_MENU_BUTTON.into();
                     *border_color = BorderColor::all(WHITE);
 
                     // The accessibility system's only update 
@@ -67,19 +70,17 @@ pub fn button_system(
                 }
                 Interaction::Pressed => {
                     input_focus.set(entity);
-                    *bg_color = PRESSED_BUTTON.into();
+                    *bg_color = PRESSED_END_MENU_BUTTON.into();
                     *border_color = BorderColor::all(BLUE);
 
                     // The accessibility system's only update 
                     // the button's state when the `Button` 
                     // component is marked as changed.
                     button.set_changed();
-
-                    replay_event_writer.write(ReplayEvent);
                 }
                 Interaction::None => {
                     input_focus.clear();
-                    *bg_color = NORMAL_BUTTON.into();
+                    *bg_color = NORMAL_END_MENU_BUTTON.into();
                     *border_color = BorderColor::all(BLACK);
 
                     // The accessibility system's only update 
@@ -88,5 +89,23 @@ pub fn button_system(
                     button.set_changed();
                 }
             }
+    }
+}
+
+
+pub fn replay_button_system(
+    interaction_query: Query<
+        &Interaction,
+        (
+            Changed<Interaction>, 
+            With<ReplayButton>
+        )
+        >,
+        mut replay_event_writer: MessageWriter<ReplayEvent>
+) {
+    for interaction in interaction_query {
+        if *interaction == Interaction::Pressed {
+            replay_event_writer.write(ReplayEvent);
+        }
     }
 }

@@ -1,8 +1,10 @@
 use super::*;
 
+mod buttons;
+pub use buttons::*;
 
 /// initilizing the end screen
-pub fn init_winner_text(
+pub fn init_end_menu(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
@@ -12,14 +14,14 @@ pub fn init_winner_text(
 
     commands.spawn((
         Node {
-        position_type: PositionType::Relative,
-        width: Val::Percent(100.0),
-        height: Val::Percent(100.0),
-        justify_content: JustifyContent::Center,
-        align_items: AlignItems::Center,
-        flex_direction: FlexDirection::Column,
-        row_gap: Val::Px(20.0),
-        ..Default::default()
+            position_type: PositionType::Relative,
+            width: Val::Percent(100.0),
+            height: Val::Percent(100.0),
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            flex_direction: FlexDirection::Column,
+            row_gap: Val::Px(20.0),
+            ..Default::default()
     },
     BackgroundColor(Color::srgba(
         0.0, 
@@ -45,16 +47,15 @@ pub fn init_winner_text(
             WinnerText,
         ));
 
-        let replay_button_bundle = 
-            create_replay_button(asset_server);
-
-        parent.spawn(replay_button_bundle);
+        create_end_menu_buttons(parent, asset_server);
     });
 }
 
 
+
+
 /// Update text with the correct turn
-pub fn show_winner_text(
+pub fn show_end_menu(
     game_state: Res<GameState>,
     mut text_query: Query<(&mut Text, &WinnerText)>,
     mut background_query: Query<(&mut BackgroundColor, &GameOverScreen, &mut Visibility)>
@@ -94,7 +95,7 @@ pub fn show_winner_text(
 }
 
 
-pub fn hide_winner_text(
+pub fn hide_end_menu(
     game_state: Res<GameState>,
     mut background_query: Query<(&mut Visibility, &GameOverScreen)>
 ) {

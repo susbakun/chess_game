@@ -3,11 +3,17 @@ use bevy::prelude::*;
 use crate::pieces::*;
 use crate::player::*;
 
+pub enum GameType {
+    PlayWithAi,
+    PlayOffline
+}
+
 #[derive(Resource)]
 pub struct GameState {
     pub game_over: bool,
     pub winner: Option<PieceColor>,
     pub player: Player,
+    pub game_type: Option<GameType>,
     // counting removed pieces (whites, blacks)
     pub removed_counts: (u8, u8)
 }
@@ -18,6 +24,7 @@ impl Default for GameState {
             game_over: false,
             winner: None,
             player: Player::default(),
+            game_type: None,
             removed_counts: (0, 0)
         }
     }
