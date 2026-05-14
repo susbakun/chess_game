@@ -19,6 +19,7 @@ pub struct GameState {
     pub game_type: Option<GameType>,
     // counting removed pieces (whites, blacks)
     pub removed_counts: (u8, u8),
+    pub engine: Option<StockfishEngine>
 }
 
 impl Default for GameState {
@@ -29,6 +30,7 @@ impl Default for GameState {
             player: Player::default(),
             game_type: None,
             removed_counts: (0, 0),
+            engine: None
         }
     }
 }

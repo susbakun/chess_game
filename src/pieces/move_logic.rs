@@ -11,7 +11,6 @@ pub fn move_piece(
     mut piece_query: Query<(Entity, &mut Piece)>,
     mut reset_selected_event: MessageWriter<ResetSelectedEvent>
 ) {
-    // TODO: call a function that returns the newly 
     if let Some(game_type) = &game_state.game_type {
         if *game_type == GameType::PlayWithAi && 
             game_state.player.0 == PieceColor::Black {

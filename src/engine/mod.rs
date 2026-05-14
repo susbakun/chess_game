@@ -1,10 +1,10 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::Mutex};
 
 use bevy::prelude::*;
 use stockfish::Stockfish;
 
 pub struct StockfishEngine {
-    engine: Stockfish,
+    engine: Mutex<Stockfish>,
     is_thinking: bool,
     best_move: Option<String>
 }
@@ -20,7 +20,7 @@ impl StockfishEngine {
         engine.set_depth(8);
 
         Ok(Self {
-            engine,
+            engine: Mutex::new(engine),
             is_thinking: false,
             best_move: None
         })
@@ -76,20 +76,27 @@ impl StockfishEngine {
     }
 
     pub fn set_position(&mut self, fen: &str) {
-        let _ = self.engine.set_fen_position(fen);
+        if let Ok(mut engine) = self.engine.lock() {
+            let _ = engine.set_fen_position(fen);
+        }
     }
 
     pub fn get_best_move(&mut self) -> Option<String> {
-        match self.engine.go() {
-            Ok(engine_output) => {
-                let best_move = engine_output.best_move().to_string();
-                self.best_move = Some(best_move.clone());
-                Some(best_move)
+        if let Ok(mut engine) = self.engine.lock() {
+            match engine.go() {
+                Ok(engine_output) => {
+                    let best_move = engine_output.best_move().to_string();
+                    self.best_move = Some(best_move.clone());
+                    Some(best_move)
+                }
+                Err(e) => {
+                    eprintln!("Stockfish error: {e}");
+                    None
+                }
             }
-            Err(e) => {
-                eprintln!("Stockfish error: {e}");
-                None
-            }
+        } else {
+            eprintln!("Failed to lock Stockfish engine");
+            None
         }
     }
 
