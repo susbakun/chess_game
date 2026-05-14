@@ -1,4 +1,6 @@
 
+use crate::engine::StockfishEngine;
+
 use super::*;
 
 
@@ -148,7 +150,12 @@ pub fn play_with_ai_button_system(
 ) {
     for interaction in interaction_query {
         if *interaction == Interaction::Pressed {
-            game_state.game_type = Some(GameType::PlayWithAi)
+            game_state.game_type = Some(GameType::PlayWithAi);
+
+
+            let engine = StockfishEngine::new()
+                .expect("failed to start the engine");
+            game_state.engine = Some(engine);
         }
     }
 }

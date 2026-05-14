@@ -11,16 +11,6 @@ pub fn move_piece(
     mut piece_query: Query<(Entity, &mut Piece)>,
     mut reset_selected_event: MessageWriter<ResetSelectedEvent>
 ) {
-    if let Some(game_type) = &game_state.game_type {
-        if *game_type == GameType::PlayWithAi && 
-            game_state.player.0 == PieceColor::Black {
-
-                game_state.change_turn();
-                return;
-        }
-    }
-
-
     let square_entity = if let Some(entity) = 
         selected_square.entity {
             entity
@@ -127,6 +117,22 @@ pub fn move_piece(
                     game_state.set_winner(winner_player);
                     game_state.toggle_game_over();
                 }
+
+                // TODO: implement real ai movements
+                if let Some(game_type) = &game_state.game_type {
+                    if *game_type == GameType::PlayWithAi && 
+                        game_state.player.0 == PieceColor::Black {
+                            let fen = convert_to_fen(&updated_pieces_vec);
+                            if let Some(engine) = &mut game_state.engine {
+                                engine.set_position(&fen);
+                                if let Some(best_move) = engine.get_best_move() {
+                                    println!("{best_move}");
+                                    game_state.change_turn();
+                                }
+                            }
+                    }
+                }
+
                 reset_selected_event.write(ResetSelectedEvent);
             }
     }
