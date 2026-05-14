@@ -1,4 +1,4 @@
-use crate::game_state::GameState;
+use crate::game_state::{GameState, GameType};
 
 use super::*;
 
@@ -11,6 +11,17 @@ pub fn move_piece(
     mut piece_query: Query<(Entity, &mut Piece)>,
     mut reset_selected_event: MessageWriter<ResetSelectedEvent>
 ) {
+    // TODO: call a function that returns the newly 
+    if let Some(game_type) = &game_state.game_type {
+        if *game_type == GameType::PlayWithAi && 
+            game_state.player.0 == PieceColor::Black {
+
+                game_state.change_turn();
+                return;
+        }
+    }
+
+
     let square_entity = if let Some(entity) = 
         selected_square.entity {
             entity
@@ -96,9 +107,10 @@ pub fn move_piece(
             
                 // Now mutate the rook
                 if let Some((rook_entity, pos)) = rook_entity_to_move {
-                    if let Ok((_, mut moving_rook)) = piece_query.get_mut(rook_entity) {
-                        moving_rook.x = pos.0;
-                        moving_rook.y = pos.1;
+                    if let Ok((_, mut moving_rook)) = piece_query
+                        .get_mut(rook_entity) {
+                            moving_rook.x = pos.0;
+                            moving_rook.y = pos.1;
                     }
                 }
 

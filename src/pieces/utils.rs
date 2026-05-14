@@ -68,3 +68,102 @@ pub fn is_king_side_castling(pos: (i8, i8)) -> bool {
     [WHITE_KING_POS_QUEEN_SIDE_CASTLING, BLACK_KING_POS_KING_SIDE_CASTLING]
         .contains(&pos)
 }
+
+
+pub fn convert_to_fen(pieces: &Vec<Piece>) -> String {
+    let mut fen = String::new();
+
+    for rank in (0..8).rev() {
+        let mut empty_count = 0;
+        for file in 0..8 {
+            let piece_at_square = pieces
+                .iter()
+                .filter(|p| !p.taken)
+                .find(|p| p.x == file && p.y == rank);
+
+            match piece_at_square {
+                Some(piece) => {
+                    if empty_count > 0 {
+                        fen.push_str(&empty_count.to_string());
+                        empty_count = 0;
+                    }
+                    let fen_piece = 
+                        piece_to_fen_character(piece);
+                    fen.push(fen_piece);
+                }
+                None => {
+                    empty_count += 1;
+                }
+            }
+        }
+
+        if empty_count > 0 {
+            fen.push_str(&empty_count.to_string());
+        }
+
+        if rank > 0 {
+            fen.push('/');
+        }
+    }
+
+    fen.push_str(" w KQkq - 0 1");
+
+    fen
+}
+
+
+fn piece_to_fen_character(piece: &Piece) -> char {
+    match (piece.piece_type, piece.color) {
+        // White pieces (uppercase)
+        (PieceType::Knight, PieceColor::White) => 'N',
+        (PieceType::Rook, PieceColor::White) => 'R',
+        (PieceType::Bishop, PieceColor::White) => 'B',
+        (PieceType::Queen, PieceColor::White) => 'Q',
+        (PieceType::King, PieceColor::White) => 'K',
+        (PieceType::Pawn, PieceColor::White) => 'P',
+
+        // Black pieces (lowercase)
+        (PieceType::Knight, PieceColor::Black) => 'n',
+        (PieceType::Rook, PieceColor::Black) => 'r',
+        (PieceType::Bishop, PieceColor::Black) => 'b',
+        (PieceType::Queen, PieceColor::Black) => 'q',
+        (PieceType::King, PieceColor::Black) => 'k',
+        (PieceType::Pawn, PieceColor::Black) => 'p',
+    }
+}
+
+pub fn fen_to_piece_pos(fen: String, pieces: &Vec<Piece>) -> Option<(Piece, (i8, i8))> {
+    let mut chars = fen.chars();
+
+    let start_file = chars.nth(0).map(map_file_to_square_num)?;
+    // we have to decrease it by one because the rank starts from 0
+    // in our grame
+    let start_rank = chars.nth(1)? as i8 - 1;
+
+    let end_file = chars.nth(2).map(map_file_to_square_num)?;
+    // we have to decrease it by one because the rank starts from 0
+    // in our grame
+    let end_rank = chars.nth(3)? as i8 - 1;
+    let end_pos = (end_rank, end_file);
+
+
+    let piece = pieces.iter().find(|p| 
+            p.x == start_file && p.y == start_rank)?;
+
+    Some((*piece, end_pos))
+}
+
+
+fn map_file_to_square_num(file: char) -> i8 {
+    match file {
+        'a' => 0,
+        'b' => 1,
+        'c' => 2,
+        'd' => 3,
+        'e' => 4,
+        'f' => 5,
+        'g' => 6,
+        'h' => 7,
+        _ => 0
+    }
+}

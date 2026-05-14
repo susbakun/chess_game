@@ -20,9 +20,32 @@ A chess game written in Rust and Bevy.
 
 - Rust (latest stable version)
 - Cargo
+- **Stockfish** (required for AI opponent)
 
 ### Installation & Running
 
+#### Installing Stockfish
+
+This game requires **Stockfish** to be installed on your system. The game will automatically search for it, but you need to install it first. Follow the instructions for your operating system:
+
+#### macOS (Homebrew)
+```bash
+brew install stockfish
+```
+
+#### Linux(Ubuntu/Debian)
+```bash
+sudo apt-get install stockfish
+```
+
+#### Windows
+1. Download the latest Stockfish executable from [stockfishchess.org/download]()
+2. Extract the files to a location (e.g., C:\Program Files\stockfish)
+3. Add the installation directory to your system PATH, or the game will search common installation locations automatically
+
+
+
+### Running the project
 ```bash
 # Clone the repository
 git clone https://github.com/susbakun/chess_game.git

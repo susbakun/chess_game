@@ -1,8 +1,11 @@
 use bevy::prelude::*;
 
+use crate::engine::*;
 use crate::pieces::*;
 use crate::player::*;
 
+
+#[derive(PartialEq)]
 pub enum GameType {
     PlayWithAi,
     PlayOffline
@@ -15,7 +18,7 @@ pub struct GameState {
     pub player: Player,
     pub game_type: Option<GameType>,
     // counting removed pieces (whites, blacks)
-    pub removed_counts: (u8, u8)
+    pub removed_counts: (u8, u8),
 }
 
 impl Default for GameState {
@@ -25,7 +28,7 @@ impl Default for GameState {
             winner: None,
             player: Player::default(),
             game_type: None,
-            removed_counts: (0, 0)
+            removed_counts: (0, 0),
         }
     }
 }
