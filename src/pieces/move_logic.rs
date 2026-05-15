@@ -43,6 +43,11 @@ pub fn process_move_system(
 
             let new_pos = (square.x, square.y);
             let player = game_state.player.clone();
+
+            if game_state.engine.is_some() && 
+                player.0 == PieceColor::Black {
+                return
+            }
             
             move_piece(
                 &mut commands,
@@ -61,10 +66,11 @@ pub fn process_move_system(
         if *game_type == GameType::PlayWithAi && 
             game_state.player.0 == PieceColor::Black {
                 let fen = convert_to_fen(&pieces_vec, player.0);
+                println!("FEN: {}", fen);
                 if let Some(engine) = &mut game_state.engine {
                     engine.set_position(&fen);
                     if let Some(best_move) = engine.get_best_move() {
-                        if let Some((current_pos, new_pos)) = fen_to_piece_pos(best_move) {
+                        if let Some((current_pos, new_pos)) = fen_to_piece_pos(best_move.clone()) {
                             let selected_entity = pieces_entity_vec
                                 .iter()
                                 .find(|(_, p)| (p.x, p.y) == current_pos)
@@ -72,6 +78,7 @@ pub fn process_move_system(
 
                             println!("{current_pos:?}");
                             println!("{new_pos:?}");
+                            println!("{best_move:?}");
 
                             move_piece(
                                 &mut commands, 

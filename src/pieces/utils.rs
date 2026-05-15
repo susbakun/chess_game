@@ -79,7 +79,7 @@ pub fn convert_to_fen(pieces: &Vec<Piece>, current_color: PieceColor) -> String 
             let piece_at_square = pieces
                 .iter()
                 .filter(|p| !p.taken)
-                .find(|p| p.x == file && p.y == rank);
+                .find(|p| p.x == rank && p.y == file);
 
             match piece_at_square {
                 Some(piece) => {
@@ -145,7 +145,7 @@ pub fn fen_to_piece_pos(fen: String) -> Option<((i8, i8), (i8, i8))> {
     // in our grame
     let start_rank = (chars.next()?
         .to_digit(10)? as i8) - 1;
-    let start_pos = (start_file, start_rank);
+    let start_pos = (start_rank, start_file);
 
 
     let end_file = chars.next().map(map_file_to_square_num)?;
@@ -153,7 +153,7 @@ pub fn fen_to_piece_pos(fen: String) -> Option<((i8, i8), (i8, i8))> {
     // in our grame
     let end_rank = (chars.next()? 
         .to_digit(10)? as i8) - 1;
-    let end_pos = (end_file, end_rank);
+    let end_pos = (end_rank, end_file);
 
     Some((start_pos, end_pos))
 }
