@@ -9,7 +9,7 @@ impl Plugin for SquarePlugin {
             .init_resource::<SquareMaterials>()
             .add_message::<ResetSelectedEvent>()
             .add_systems(Startup, create_board)
-            .add_systems(Update, move_piece
+            .add_systems(Update, process_move_system
                 .run_if(resource_changed::<SelectedSquare>))
             .add_systems(Update, select_piece
                 .run_if(resource_changed::<SelectedSquare>))

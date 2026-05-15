@@ -70,7 +70,7 @@ pub fn is_king_side_castling(pos: (i8, i8)) -> bool {
 }
 
 
-pub fn convert_to_fen(pieces: &Vec<Piece>) -> String {
+pub fn convert_to_fen(pieces: &Vec<Piece>, current_color: PieceColor) -> String {
     let mut fen = String::new();
 
     for rank in (0..8).rev() {
@@ -106,7 +106,12 @@ pub fn convert_to_fen(pieces: &Vec<Piece>) -> String {
         }
     }
 
-    fen.push_str(" w KQkq - 0 1");
+    let turn = match current_color {
+        PieceColor::White => "w",
+        PieceColor::Black => "b"
+    };
+
+    fen.push_str(&format!(" {turn} KQkq - 0 1"));
 
     fen
 }
@@ -132,25 +137,25 @@ fn piece_to_fen_character(piece: &Piece) -> char {
     }
 }
 
-pub fn fen_to_piece_pos(fen: String, pieces: &Vec<Piece>) -> Option<(Piece, (i8, i8))> {
+pub fn fen_to_piece_pos(fen: String) -> Option<((i8, i8), (i8, i8))> {
     let mut chars = fen.chars();
 
-    let start_file = chars.nth(0).map(map_file_to_square_num)?;
+    let start_file = chars.next().map(map_file_to_square_num)?;
     // we have to decrease it by one because the rank starts from 0
     // in our grame
-    let start_rank = chars.nth(1)? as i8 - 1;
+    let start_rank = (chars.next()?
+        .to_digit(10)? as i8) - 1;
+    let start_pos = (start_file, start_rank);
 
-    let end_file = chars.nth(2).map(map_file_to_square_num)?;
+
+    let end_file = chars.next().map(map_file_to_square_num)?;
     // we have to decrease it by one because the rank starts from 0
     // in our grame
-    let end_rank = chars.nth(3)? as i8 - 1;
-    let end_pos = (end_rank, end_file);
+    let end_rank = (chars.next()? 
+        .to_digit(10)? as i8) - 1;
+    let end_pos = (end_file, end_rank);
 
-
-    let piece = pieces.iter().find(|p| 
-            p.x == start_file && p.y == start_rank)?;
-
-    Some((*piece, end_pos))
+    Some((start_pos, end_pos))
 }
 
 

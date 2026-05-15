@@ -1,6 +1,7 @@
 use crate::pieces::*;
 use bevy::prelude::*;
 
+#[derive(Clone)]
 pub struct Player(pub PieceColor);
 
 

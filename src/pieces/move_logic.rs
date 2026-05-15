@@ -1,8 +1,8 @@
-use crate::game_state::{GameState, GameType};
+use crate::{game_state::{GameState, GameType}, player::Player};
 
 use super::*;
 
-pub fn move_piece(
+pub fn process_move_system(
     mut commands: Commands,
     selected_square: Res<SelectedSquare>,
     selected_piece: Res<SelectedPiece>,
@@ -11,131 +11,181 @@ pub fn move_piece(
     mut piece_query: Query<(Entity, &mut Piece)>,
     mut reset_selected_event: MessageWriter<ResetSelectedEvent>
 ) {
-    let square_entity = if let Some(entity) = 
-        selected_square.entity {
-            entity
-    } else {
-            return
-    };
 
-    let square = if let Ok(square) = 
-        squares_query.get(square_entity) {
-            square
-    } else {
-            return
-    };
-
-    let new_pos = (square.x, square.y);
-    let player = &game_state.player;
-
-    if let Some(selected_piece) = 
-        selected_piece.entity {
-            let mut pieces_vec: Vec<Piece> = piece_query
-                .iter_mut()
+    let mut pieces_vec: Vec<Piece> = piece_query
+                .iter()
                 .map(|(_, piece)| *piece)
                 .filter(|piece| !piece.taken)
                 .collect();
 
 
-            let pieces_entity_vec: Vec<(Entity, Piece)> = piece_query
-                .iter_mut()
-                .map(|(entity, piece)| (entity, *piece))
-                .filter(|(_, piece)| !piece.taken)
-                .collect();
-
-            let mut piece = if let Ok((_, piece)) = piece_query
-                .get_mut(selected_piece) {
-                    piece
+    let pieces_entity_vec: Vec<(Entity, Piece)> = piece_query
+        .iter()
+        .map(|(entity, piece)| (entity, *piece))
+        .filter(|(_, piece)| !piece.taken)
+        .collect();
+    
+    if let Some(selected_piece) = 
+        selected_piece.entity {
+            let square_entity = if let Some(entity) = 
+                selected_square.entity {
+                    entity
             } else {
-                    return;
+                return
             };
 
-            if piece.is_move_valid(new_pos, &player, &mut pieces_vec) 
-                && piece.color == player.0
-            {
-                for (other_entity, other_piece) in pieces_entity_vec.iter() {
-                    if other_piece.x == new_pos.0
-                        && other_piece.y == new_pos.1
-                        && other_piece.color != piece.color
-                        {
-                            commands.entity(*other_entity).insert(Taken);
+            let square = if let Ok(square) = 
+                squares_query.get(square_entity) {
+                    square
+            } else {
+                return
+            };
+
+            let new_pos = (square.x, square.y);
+            let player = game_state.player.clone();
+            
+            move_piece(
+                &mut commands,
+                Some(selected_piece),
+                new_pos, 
+                &player,
+                &mut pieces_vec, 
+                &pieces_entity_vec, 
+                &mut piece_query,
+                &mut game_state,
+                &mut reset_selected_event
+            );
+    } else if let Some(game_type) = &game_state.game_type {
+        let player = game_state.player.clone();
+        
+        if *game_type == GameType::PlayWithAi && 
+            game_state.player.0 == PieceColor::Black {
+                let fen = convert_to_fen(&pieces_vec, player.0);
+                if let Some(engine) = &mut game_state.engine {
+                    engine.set_position(&fen);
+                    if let Some(best_move) = engine.get_best_move() {
+                        if let Some((current_pos, new_pos)) = fen_to_piece_pos(best_move) {
+                            let selected_entity = pieces_entity_vec
+                                .iter()
+                                .find(|(_, p)| (p.x, p.y) == current_pos)
+                                .map(|(e, _)| *e);
+
+                            println!("{current_pos:?}");
+                            println!("{new_pos:?}");
+
+                            move_piece(
+                                &mut commands, 
+                                selected_entity,
+                                new_pos,
+                                &player, 
+                                &mut pieces_vec, 
+                                &pieces_entity_vec, 
+                                &mut piece_query, 
+                                &mut game_state,
+                                &mut reset_selected_event
+                            );
                         }
                     }
-
-                // Recreate pieces_vec AFTER moving the piece
-                let mut updated_pieces_vec: Vec<Piece> = piece.simulate_next_step(
-                    new_pos, 
-                    &pieces_vec
-                );
-
-                // special move for castling rule
-                let rook_entity_to_move = if piece
-                    .castling_rule(new_pos, &player, &pieces_vec) {
-                    piece.find_castle_in_castling_move(new_pos, &pieces_vec)
-                        .and_then(|rook| {
-
-                            pieces_entity_vec
-                                .iter()
-                                .find(|(_, p)| 
-                                    p.piece_type == rook.piece_type 
-                                    && (p.x, p.y) == (rook.x, rook.y)
-                                    && p.color == rook.color
-                                )
-                                .map(|(entity, _)| 
-                                    (*entity, piece.find_pos_for_castle(new_pos)))
-                        })
-                } else {
-                    None
-                };
-
-                piece.x = new_pos.0;
-                piece.y = new_pos.1;
-            
-                // Drop the mutable borrow of piece
-                drop(piece);
-            
-                // Now mutate the rook
-                if let Some((rook_entity, pos)) = rook_entity_to_move {
-                    if let Ok((_, mut moving_rook)) = piece_query
-                        .get_mut(rook_entity) {
-                            moving_rook.x = pos.0;
-                            moving_rook.y = pos.1;
-                    }
                 }
-
-                // we store the current color before changing it
-                // so we would have access to the player who might
-                // have won the game
-                let winner_player = player.0;
-
-                game_state.change_turn();
-
-                // retrieve the next player
-                let player = &game_state.player;
-
-                if player.is_check_mate(&mut updated_pieces_vec) {
-                    game_state.set_winner(winner_player);
-                    game_state.toggle_game_over();
-                }
-
-                // TODO: implement real ai movements
-                if let Some(game_type) = &game_state.game_type {
-                    if *game_type == GameType::PlayWithAi && 
-                        game_state.player.0 == PieceColor::Black {
-                            let fen = convert_to_fen(&updated_pieces_vec);
-                            if let Some(engine) = &mut game_state.engine {
-                                engine.set_position(&fen);
-                                if let Some(best_move) = engine.get_best_move() {
-                                    println!("{best_move}");
-                                    game_state.change_turn();
-                                }
-                            }
-                    }
-                }
-
-                reset_selected_event.write(ResetSelectedEvent);
-            }
+        }
     }
+}
+
+
+fn move_piece(
+    commands: &mut Commands,
+    selected_piece: Option<Entity>,
+    new_pos: (i8, i8),
+    player: &Player,
+    pieces_vec: &mut Vec<Piece>,
+    pieces_entity_vec: &Vec<(Entity, Piece)>,
+    piece_query: &mut Query<(Entity, &mut Piece)>,
+    game_state: &mut GameState,
+    reset_selected_event: &mut MessageWriter<ResetSelectedEvent>
+) {
+    let p: &mut Piece;
+    if let Some(selected_piece) = selected_piece {
+        let piece = if let Ok((_, piece)) = piece_query
+            .get_mut(selected_piece) {
+                piece
+            } else {
+                return;
+            };
+        p = piece.into_inner()
+    } else {
+        return
+    }
+
+    if p.is_move_valid(new_pos, &player, pieces_vec) 
+        && p.color == player.0
+        {
+            for (other_entity, other_piece) in pieces_entity_vec.iter() {
+                if other_piece.x == new_pos.0
+                    && other_piece.y == new_pos.1
+                    && other_piece.color != p.color
+                    {
+                        commands.entity(*other_entity).insert(Taken);
+                    }
+                }
+
+            // Recreate pieces_vec AFTER moving the piece
+            let mut updated_pieces_vec: Vec<Piece> = p.simulate_next_step(
+                new_pos, 
+                &pieces_vec
+            );
+
+            // special move for castling rule
+            let rook_entity_to_move = if p
+                .castling_rule(new_pos, &player, &pieces_vec) {
+                p.find_castle_in_castling_move(new_pos, &pieces_vec)
+                    .and_then(|rook| {
+
+                        pieces_entity_vec
+                            .iter()
+                            .find(|(_, p)| 
+                                p.piece_type == rook.piece_type 
+                                && (p.x, p.y) == (rook.x, rook.y)
+                                && p.color == rook.color
+                            )
+                            .map(|(entity, _)| 
+                                (*entity, p.find_pos_for_castle(new_pos)))
+                    })
+            } else {
+                None
+            };
+
+            p.x = new_pos.0;
+            p.y = new_pos.1;
+        
+            // Drop the mutable borrow of piece
+            drop(p);
+        
+            // Now mutate the rook
+            if let Some((rook_entity, pos)) = rook_entity_to_move {
+                if let Ok((_, mut moving_rook)) = piece_query
+                    .get_mut(rook_entity) {
+                        moving_rook.x = pos.0;
+                        moving_rook.y = pos.1;
+                }
+            }
+
+            // we store the current color before changing it
+            // so we would have access to the player who might
+            // have won the game
+            let winner_player = player.0;
+
+            game_state.change_turn();
+
+            // retrieve the next player
+            let player = &game_state.player;
+
+            if player.is_check_mate(&mut updated_pieces_vec) {
+                game_state.set_winner(winner_player);
+                game_state.toggle_game_over();
+            }
+
+            reset_selected_event.write(ResetSelectedEvent);
+        }
 }
 
 
