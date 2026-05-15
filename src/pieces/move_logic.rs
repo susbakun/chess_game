@@ -158,7 +158,7 @@ fn move_piece(
             p.y = new_pos.1;
         
             // Drop the mutable borrow of piece
-            drop(p);
+            let _ = p;
         
             // Now mutate the rook
             if let Some((rook_entity, pos)) = rook_entity_to_move {
