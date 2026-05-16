@@ -19,9 +19,11 @@ pub struct GameState {
     pub game_type: Option<GameType>,
     // counting removed pieces (whites, blacks)
     pub removed_counts: (u8, u8),
+    #[cfg(not(target_arch = "wasm32"))]
     pub engine: Option<StockfishEngine>
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl Default for GameState {
     fn default() -> Self {
         Self {
@@ -31,6 +33,19 @@ impl Default for GameState {
             game_type: None,
             removed_counts: (0, 0),
             engine: None
+        }
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+impl Default for GameState {
+    fn default() -> Self {
+        Self {
+            game_over: false,
+            winner: None,
+            player: Player::default(),
+            game_type: None,
+            removed_counts: (0, 0)
         }
     }
 }

@@ -27,7 +27,7 @@ pub fn create_end_menu_buttons(
         BackgroundColor(NORMAL_END_MENU_BUTTON),
         BorderColor::all(Color::WHITE),
         children![
-            Text::new("Repaly"),
+            Text::new("Back to menu"),
             TextFont {
                 font,
                 font_size: 33.0,
@@ -93,7 +93,7 @@ pub fn end_menu_buttons_interactions_system(
 }
 
 
-pub fn replay_button_system(
+pub fn back_to_menu_button_system(
     interaction_query: Query<
         &Interaction,
         (
@@ -101,11 +101,11 @@ pub fn replay_button_system(
             With<ReplayButton>
         )
         >,
-        mut replay_event_writer: MessageWriter<ReplayEvent>
+        mut replay_event_writer: MessageWriter<BackToMenuEvent>
 ) {
     for interaction in interaction_query {
         if *interaction == Interaction::Pressed {
-            replay_event_writer.write(ReplayEvent);
+            replay_event_writer.write(BackToMenuEvent);
         }
     }
 }

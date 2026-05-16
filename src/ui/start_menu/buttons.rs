@@ -12,6 +12,7 @@ pub fn create_start_menu_buttons(
         "fonts/FiraSans-Bold.ttf"
     );
 
+    #[cfg(not(target_arch = "wasm32"))]
     parent.spawn((
         PlayWithAiButton,
         Button,
@@ -138,6 +139,8 @@ pub fn start_menu_buttons_interactions_system(
 }
 
 
+
+#[cfg(not(target_arch = "wasm32"))]
 pub fn play_with_ai_button_system(
     mut game_state: ResMut<GameState>,
     interaction_query: Query<

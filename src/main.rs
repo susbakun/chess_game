@@ -54,7 +54,7 @@ fn main() {
         .add_plugins(SquarePlugin)
         .add_plugins(PiecePlugin)
         .add_plugins(UIPlugin)
-        .add_message::<ReplayEvent>()
+        .add_message::<BackToMenuEvent>()
         .run();
 }
 

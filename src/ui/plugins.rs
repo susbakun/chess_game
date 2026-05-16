@@ -17,7 +17,7 @@ impl Plugin for UIPlugin {
                 .run_if(resource_changed::<GameState>))
             .add_systems(Update, (
                 start_menu_buttons_interactions_system,
-                replay_button_system
+                back_to_menu_button_system
             ))
             .add_systems(Update, (
                 show_start_menu,

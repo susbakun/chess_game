@@ -1,11 +1,13 @@
 use std::{path::PathBuf, sync::Mutex};
 
 use bevy::prelude::*;
+
+#[cfg(not(target_arch = "wasm32"))]
 use stockfish::Stockfish;
 
+#[cfg(not(target_arch = "wasm32"))]
 pub struct StockfishEngine {
     engine: Mutex<Stockfish>,
-    is_thinking: bool,
     best_move: Option<String>
 }
 
@@ -21,7 +23,6 @@ impl StockfishEngine {
 
         Ok(Self {
             engine: Mutex::new(engine),
-            is_thinking: false,
             best_move: None
         })
     }
@@ -98,10 +99,6 @@ impl StockfishEngine {
             eprintln!("Failed to lock Stockfish engine");
             None
         }
-    }
-
-    pub fn set_is_thinking(&mut self, thinking: bool) {
-        self.is_thinking = thinking;
     }
 }
 

@@ -1,7 +1,7 @@
 use super::*;
 
 #[derive(Message)]
-pub struct ReplayEvent;
+pub struct BackToMenuEvent;
 
 pub fn replay(
     mut commands: Commands,
@@ -13,7 +13,7 @@ pub fn replay(
     pieces_query: Query<Entity, With<Piece>>,
     squares_query: Query<Entity, With<Square>>,
     taken_pieces_query: Query<Entity, With<Taken>>,
-    mut replay_events: MessageReader<ReplayEvent>,
+    mut replay_events: MessageReader<BackToMenuEvent>,
 ) {
     if let Some(_) = replay_events.read().next() {
         *game_state = GameState::default();
