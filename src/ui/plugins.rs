@@ -8,7 +8,6 @@ impl Plugin for UIPlugin {
             .add_systems(Startup, init_next_move_text)
             .add_systems(Startup, init_end_menu)
             .add_systems(Startup, init_start_menu)
-            .add_systems(Startup, init_difficulty_menu)
             .add_systems(Update, next_move_text_update
                 .run_if(resource_changed::<GameState>))
             .add_systems(Update, (
@@ -31,22 +30,21 @@ impl Plugin for UIPlugin {
             
             
             #[cfg(not(target_arch = "wasm32"))]
-            app.add_systems(Update, 
-                play_with_ai_button_system
-            );
-
-            #[cfg(not(target_arch = "wasm32"))]
-            app.add_systems(Update, (
-                difficulty_menu_buttons_interactions_system,
-                hard_difficulty_button_system,
-                medium_difficulty_button_system,
-                easy_difficulty_button_system
-            ));
-
-            #[cfg(not(target_arch = "wasm32"))]
-            app.add_systems(Update, (
-                show_difficulty_menu,
-                hide_difficulty_menu
-            ));
+            {
+                app.add_systems(Startup, init_difficulty_menu)
+                .add_systems(Update, 
+                    play_with_ai_button_system
+                )
+                .add_systems(Update, (
+                    difficulty_menu_buttons_interactions_system,
+                    hard_difficulty_button_system,
+                    medium_difficulty_button_system,
+                    easy_difficulty_button_system
+                ))
+                .add_systems(Update, (
+                    show_difficulty_menu,
+                    hide_difficulty_menu
+                ));
+            }
     }
 }

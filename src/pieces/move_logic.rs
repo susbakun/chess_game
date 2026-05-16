@@ -44,6 +44,7 @@ pub fn process_move_system(
             let new_pos = (square.x, square.y);
             let player = game_state.player.clone();
 
+            #[cfg(not(target_arch = "wasm32"))]
             if game_state.engine.is_some() && 
                 player.0 == PieceColor::Black {
                 return
