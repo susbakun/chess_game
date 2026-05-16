@@ -5,6 +5,8 @@ use super::*;
 mod buttons;
 pub use buttons::*;
 
+
+#[cfg(not(target_arch = "wasm32"))]
 pub fn init_difficulty_menu(
     mut commands: Commands,
     asset_server: Res<AssetServer>
