@@ -63,6 +63,7 @@ pub fn process_move_system(
     } else if let Some(game_type) = &game_state.game_type {
         let player = game_state.player.clone();
         
+        #[cfg(not(target_arch = "wasm32"))]
         if *game_type == GameType::PlayWithAi && 
             game_state.player.0 == PieceColor::Black {
                 let fen = convert_to_fen(&pieces_vec, player.0);
