@@ -11,6 +11,7 @@ pub struct StockfishEngine {
     best_move: Option<String>
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl StockfishEngine {
     pub fn new() -> Result<Self, String> {
         let stockfish_path = Self::find_stockfish()
@@ -109,6 +110,8 @@ impl StockfishEngine {
 }
 
 
+
+#[cfg(not(target_arch = "wasm32"))]
 impl Default for StockfishEngine {
     fn default() -> Self {
         StockfishEngine::new()

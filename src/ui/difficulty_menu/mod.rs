@@ -1,4 +1,4 @@
-use crate::ui::difficulty_menu::buttons::create_difficulty_menu_buttons;
+#[cfg(not(target_arch = "wasm32"))]
 
 use super::*;
 
@@ -55,6 +55,8 @@ pub fn init_difficulty_menu(
     });
 }
 
+
+#[cfg(not(target_arch = "wasm32"))]
 pub fn show_difficulty_menu(
     game_state: Res<GameState>,
     mut background_query: Query<(&mut Visibility, &DifficultyMenuScreen)>
@@ -71,6 +73,7 @@ pub fn show_difficulty_menu(
 }
 
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn hide_difficulty_menu(
     game_state: Res<GameState>,
     mut background_query: Query<(&mut Visibility, &DifficultyMenuScreen)>

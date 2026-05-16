@@ -26,18 +26,25 @@ impl Plugin for UIPlugin {
             ))
             .add_systems(Update, (
                 end_menu_buttons_interactions_system,
+                #[cfg(not(target_arch = "wasm32"))]
                 play_with_ai_button_system,
                 play_offline_button_system,
                 exit_button_system
             ))
             .add_systems(Update, (
+                #[cfg(not(target_arch = "wasm32"))]
                 difficulty_menu_buttons_interactions_system,
+                #[cfg(not(target_arch = "wasm32"))]
                 hard_difficulty_button_system,
+                #[cfg(not(target_arch = "wasm32"))]
                 medium_difficulty_button_system,
+                #[cfg(not(target_arch = "wasm32"))]
                 easy_difficulty_button_system
             ))
             .add_systems(Update, (
+                #[cfg(not(target_arch = "wasm32"))]
                 show_difficulty_menu,
+                #[cfg(not(target_arch = "wasm32"))]
                 hide_difficulty_menu
             ));
     }

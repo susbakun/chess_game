@@ -135,6 +135,7 @@ pub fn difficulty_menu_buttons_interactions_system(
 }
 
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn hard_difficulty_button_system(
     mut game_state: ResMut<GameState>,
     interaction_query: Query<
@@ -156,6 +157,7 @@ pub fn hard_difficulty_button_system(
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn medium_difficulty_button_system(
     mut game_state: ResMut<GameState>,
     interaction_query: Query<
@@ -177,6 +179,8 @@ pub fn medium_difficulty_button_system(
     }
 }
 
+
+#[cfg(not(target_arch = "wasm32"))]
 pub fn easy_difficulty_button_system(
     mut game_state: ResMut<GameState>,
     interaction_query: Query<
