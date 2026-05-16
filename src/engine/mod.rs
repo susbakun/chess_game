@@ -76,6 +76,12 @@ impl StockfishEngine {
         None
     }
 
+    pub fn set_depth(&mut self, depth: u32) {
+        if let Ok(mut engine) = self.engine.lock() {
+            engine.set_depth(depth);
+        }
+    }
+
     pub fn set_position(&mut self, fen: &str) {
         if let Ok(mut engine) = self.engine.lock() {
             let _ = engine.set_fen_position(fen);

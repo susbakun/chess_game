@@ -20,7 +20,9 @@ pub struct GameState {
     // counting removed pieces (whites, blacks)
     pub removed_counts: (u8, u8),
     #[cfg(not(target_arch = "wasm32"))]
-    pub engine: Option<StockfishEngine>
+    pub engine: Option<StockfishEngine>,
+    #[cfg(not(target_arch = "wasm32"))]
+    pub difficulty: Option<u32>
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -32,7 +34,8 @@ impl Default for GameState {
             player: Player::default(),
             game_type: None,
             removed_counts: (0, 0),
-            engine: None
+            engine: None,
+            difficulty: None
         }
     }
 }

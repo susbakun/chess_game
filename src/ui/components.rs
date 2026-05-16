@@ -20,8 +20,17 @@ pub struct ReplayButton;
 pub struct MenuScreen;
 #[derive(Component)]
 pub struct PlayWithAiButton;
-
 #[derive(Component)]
 pub struct PlayOfflineButton;
 #[derive(Component)]
 pub struct ExitButton;
+
+
+#[derive(Component)]
+pub struct DifficultyMenuScreen;
+#[derive(Component)]
+pub struct HardDiff;
+#[derive(Component)]
+pub struct MediumDiff;
+#[derive(Component)]
+pub struct EasyDiff;

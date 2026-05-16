@@ -20,3 +20,5 @@ mod plugins;
 pub use plugins::*;
 mod start_menu;
 pub use start_menu::*;
+mod  difficulty_menu;
+use difficulty_menu::*;
