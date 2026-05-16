@@ -59,7 +59,7 @@ cargo run --release
 ## TODO
 
 - [ ] Multiplayer support
-- [ ] Adding chess engine
+- [x] Adding chess engine
 - [x] Implement a system that keeps track of the taken pieces and displays them, maybe in UI or as objects next to the board.
 - [x] Finish implementing all the rules: castling, check mates.
 - [x] Show the result on the UI (instead of console).
