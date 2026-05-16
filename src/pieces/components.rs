@@ -27,6 +27,7 @@ impl Piece {
             simulate_next_step(new_pos, &pieces);
 
         if player.is_check(&pieces_after_move) {
+            println!("Move from ({}, {}) to ({}, {}) leaves king in check", self.x, self.y, new_pos.0, new_pos.1);
             return false
         }
 

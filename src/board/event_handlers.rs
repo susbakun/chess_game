@@ -49,7 +49,7 @@ pub fn on_sqaure_click(
     materials: Res<SquareMaterials>,
     mut selected_square: ResMut<SelectedSquare>,
     mut selected_piece: ResMut<SelectedPiece>,
-    mut squares_query: Query<(&mut MeshMaterial3d<StandardMaterial>, &Square)>
+    mut squares_query: Query<(&mut MeshMaterial3d<StandardMaterial>, &Square)>,
 ) {
     if _click.button != PointerButton::Primary {
         return

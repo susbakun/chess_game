@@ -66,7 +66,6 @@ pub fn process_move_system(
         if *game_type == GameType::PlayWithAi && 
             game_state.player.0 == PieceColor::Black {
                 let fen = convert_to_fen(&pieces_vec, player.0);
-                println!("FEN: {}", fen);
                 if let Some(engine) = &mut game_state.engine {
                     engine.set_position(&fen);
                     if let Some(best_move) = engine.get_best_move() {
@@ -75,10 +74,6 @@ pub fn process_move_system(
                                 .iter()
                                 .find(|(_, p)| (p.x, p.y) == current_pos)
                                 .map(|(e, _)| *e);
-
-                            println!("{current_pos:?}");
-                            println!("{new_pos:?}");
-                            println!("{best_move:?}");
 
                             move_piece(
                                 &mut commands, 
@@ -190,7 +185,8 @@ fn move_piece(
                 game_state.set_winner(winner_player);
                 game_state.toggle_game_over();
             }
-
+            reset_selected_event.write(ResetSelectedEvent);
+        } else if new_pos != (p.x, p.y) {
             reset_selected_event.write(ResetSelectedEvent);
         }
 }
