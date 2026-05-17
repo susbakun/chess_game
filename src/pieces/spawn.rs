@@ -7,19 +7,17 @@ fn spawn_king(
     mesh_cross: Handle<Mesh>,
     piece_color: PieceColor,
     position: (i8, i8),
-    taken: bool
+    taken: bool,
 ) {
     commands
         .spawn((
-            Transform::from_translation(
-                vec3(position.0 as f32, 0.0, position.1 as f32)
-            ),
+            Transform::from_translation(vec3(position.0 as f32, 0.0, position.1 as f32)),
             Piece {
                 color: piece_color,
                 piece_type: PieceType::King,
                 x: position.0,
                 y: position.1,
-                taken
+                taken,
             },
         ))
         .with_children(|parent| {
@@ -28,7 +26,7 @@ fn spawn_king(
                 MeshMaterial3d(material.clone()),
                 Transform::from_translation(Vec3::new(-0.2, 0.0, -1.9))
                     .with_scale(Vec3::new(0.2, 0.2, 0.2)),
-                Pickable::IGNORE
+                Pickable::IGNORE,
             ));
 
             parent.spawn((
@@ -36,7 +34,7 @@ fn spawn_king(
                 MeshMaterial3d(material.clone()),
                 Transform::from_translation(Vec3::new(-0.2, 0.0, -1.9))
                     .with_scale(Vec3::new(0.2, 0.2, 0.2)),
-                Pickable::IGNORE
+                Pickable::IGNORE,
             ));
         });
 }
@@ -49,44 +47,37 @@ fn spawn_knight(
     piece_color: PieceColor,
     position: (i8, i8),
     rotate: bool,
-    taken: bool
+    taken: bool,
 ) {
     commands
         .spawn((
-            Transform::from_translation(
-                vec3(position.0 as f32, 0.0, position.1 as f32),
-            )
-                .with_rotation(
-                    if rotate {
-                        Quat::from_xyzw(0.0, 1.0, 0.0, 0.0)
-                            .normalize()
-                    } else {
-                        Quat::from_xyzw(0.0, 0.0, 0.0, 0.0)
-                    }
-                ),
-                Piece {
-                    color: piece_color,
-                    piece_type: PieceType::Knight,
-                    x: position.0,
-                    y: position.1,
-                    taken
-                },
-                Pickable::IGNORE
-            ))
+            Transform::from_translation(vec3(position.0 as f32, 0.0, position.1 as f32))
+                .with_rotation(if rotate {
+                    Quat::from_xyzw(0.0, 1.0, 0.0, 0.0).normalize()
+                } else {
+                    Quat::from_xyzw(0.0, 0.0, 0.0, 0.0)
+                }),
+            Piece {
+                color: piece_color,
+                piece_type: PieceType::Knight,
+                x: position.0,
+                y: position.1,
+                taken,
+            },
+            Pickable::IGNORE,
+        ))
         .with_children(|parent| {
             parent.spawn((
                 Mesh3d(mesh_1),
                 MeshMaterial3d(material.clone()),
-                Transform::from_translation(vec3(-0.15, 0.0, 0.85))
-                    .with_scale(vec3(0.2, 0.2, 0.2)),
-                Pickable::IGNORE
+                Transform::from_translation(vec3(-0.15, 0.0, 0.85)).with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE,
             ));
             parent.spawn((
                 Mesh3d(mesh_2),
                 MeshMaterial3d(material.clone()),
-                Transform::from_translation(vec3(-0.15, 0.0, 0.85))
-                    .with_scale(vec3(0.2, 0.2, 0.2)),
-                Pickable::IGNORE
+                Transform::from_translation(vec3(-0.15, 0.0, 0.85)).with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE,
             ));
         });
 }
@@ -97,28 +88,25 @@ fn spawn_queen(
     mesh: Handle<Mesh>,
     piece_color: PieceColor,
     position: (i8, i8),
-    taken: bool
+    taken: bool,
 ) {
     commands
         .spawn((
-            Transform::from_translation(
-                vec3(position.0 as f32, 0.0, position.1 as f32)
-            ),
+            Transform::from_translation(vec3(position.0 as f32, 0.0, position.1 as f32)),
             Piece {
                 color: piece_color,
                 piece_type: PieceType::Queen,
                 x: position.0,
                 y: position.1,
-                taken
+                taken,
             },
         ))
         .with_children(|parent| {
             parent.spawn((
                 Mesh3d(mesh),
                 MeshMaterial3d(material),
-                Transform::from_translation(vec3(-0.2, 0.0, -0.95))
-                    .with_scale(vec3(0.2, 0.2, 0.2)),
-                Pickable::IGNORE
+                Transform::from_translation(vec3(-0.2, 0.0, -0.95)).with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE,
             ));
         });
 }
@@ -129,29 +117,25 @@ fn spawn_bishop(
     material: Handle<StandardMaterial>,
     piece_color: PieceColor,
     position: (i8, i8),
-    taken: bool
+    taken: bool,
 ) {
     commands
         .spawn((
-            Transform::from_translation(
-                vec3(position.0 as f32, 0.0, position.1 as f32)
-            ),
+            Transform::from_translation(vec3(position.0 as f32, 0.0, position.1 as f32)),
             Piece {
                 color: piece_color,
                 piece_type: PieceType::Bishop,
                 x: position.0,
                 y: position.1,
-                taken
+                taken,
             },
         ))
         .with_children(|parent| {
             parent.spawn((
                 Mesh3d(mesh),
                 MeshMaterial3d(material),
-                Transform::from_translation(
-                    vec3(-0.1, 0.0, 0.0)
-                ).with_scale(vec3(0.2, 0.2, 0.2)),
-                Pickable::IGNORE
+                Transform::from_translation(vec3(-0.1, 0.0, 0.0)).with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE,
             ));
         });
 }
@@ -162,29 +146,25 @@ fn spawn_rook(
     material: Handle<StandardMaterial>,
     piece_color: PieceColor,
     position: (i8, i8),
-    taken: bool
+    taken: bool,
 ) {
     commands
         .spawn((
-            Transform::from_translation(
-                vec3(position.0 as f32, 0.0, position.1 as f32)
-            ),
+            Transform::from_translation(vec3(position.0 as f32, 0.0, position.1 as f32)),
             Piece {
                 color: piece_color,
                 piece_type: PieceType::Rook,
                 x: position.0,
                 y: position.1,
-                taken
+                taken,
             },
         ))
         .with_children(|parent| {
             parent.spawn((
                 Mesh3d(mesh),
                 MeshMaterial3d(material),
-                Transform::from_translation(
-                    vec3(-0.05, 0.0, 1.8)
-                ).with_scale(vec3(0.2, 0.2, 0.2)),
-                Pickable::IGNORE
+                Transform::from_translation(vec3(-0.05, 0.0, 1.8)).with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE,
             ));
         });
 }
@@ -195,29 +175,25 @@ fn spawn_pawn(
     material: Handle<StandardMaterial>,
     piece_color: PieceColor,
     position: (i8, i8),
-    taken: bool
+    taken: bool,
 ) {
     commands
         .spawn((
-            Transform::from_translation(
-                vec3(position.0 as f32, 0.0, position.1 as f32)
-            ),
+            Transform::from_translation(vec3(position.0 as f32, 0.0, position.1 as f32)),
             Piece {
                 color: piece_color,
                 piece_type: PieceType::Pawn,
                 x: position.0,
                 y: position.1,
-                taken
+                taken,
             },
         ))
         .with_children(|parent| {
             parent.spawn((
                 Mesh3d(mesh),
                 MeshMaterial3d(material),
-                Transform::from_translation(
-                    vec3(-0.2, 0.0, 2.6)
-                ).with_scale(vec3(0.2, 0.2, 0.2)),
-                Pickable::IGNORE
+                Transform::from_translation(vec3(-0.2, 0.0, 2.6)).with_scale(vec3(0.2, 0.2, 0.2)),
+                Pickable::IGNORE,
             ));
         });
 }
@@ -233,23 +209,23 @@ pub fn spawn_piece(
     match piece.piece_type {
         PieceType::King => {
             spawn_king(
-                commands.reborrow(), 
+                commands.reborrow(),
                 material,
                 piece_handles.king_handle.clone(),
-                piece_handles.king_cross_handle.clone(), 
-                piece.color, 
+                piece_handles.king_cross_handle.clone(),
+                piece.color,
                 position,
-                piece.taken
+                piece.taken,
             );
         }
         PieceType::Queen => {
             spawn_queen(
-                commands.reborrow(), 
-                material, 
-                piece_handles.queen_handle.clone(), 
-                piece.color, 
+                commands.reborrow(),
+                material,
+                piece_handles.queen_handle.clone(),
+                piece.color,
                 position,
-                piece.taken
+                piece.taken,
             );
         }
         PieceType::Knight => {
@@ -260,44 +236,44 @@ pub fn spawn_piece(
             };
 
             spawn_knight(
-                commands.reborrow(), 
-                material, 
-                piece_handles.knight_1_handle.clone(), 
-                piece_handles.knight_2_handle.clone(), 
-                piece.color, 
+                commands.reborrow(),
+                material,
+                piece_handles.knight_1_handle.clone(),
+                piece_handles.knight_2_handle.clone(),
+                piece.color,
                 position,
                 rotate,
-                piece.taken
+                piece.taken,
             );
         }
         PieceType::Bishop => {
             spawn_bishop(
-                commands.reborrow(), 
-                piece_handles.bishop_handle.clone(), 
-                material, 
-                piece.color, 
+                commands.reborrow(),
+                piece_handles.bishop_handle.clone(),
+                material,
+                piece.color,
                 position,
-                piece.taken
+                piece.taken,
             );
         }
         PieceType::Rook => {
             spawn_rook(
-                commands.reborrow(), 
-                piece_handles.rook_handle.clone(), 
-                material, 
-                piece.color, 
+                commands.reborrow(),
+                piece_handles.rook_handle.clone(),
+                material,
+                piece.color,
                 position,
-                piece.taken
+                piece.taken,
             );
         }
         PieceType::Pawn => {
             spawn_pawn(
-                commands.reborrow(), 
-                piece_handles.pawn_handle.clone(), 
-                material, 
-                piece.color, 
+                commands.reborrow(),
+                piece_handles.pawn_handle.clone(),
+                material,
+                piece.color,
                 position,
-                piece.taken
+                piece.taken,
             );
         }
     }

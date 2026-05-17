@@ -10,14 +10,13 @@ mod pieces;
 use pieces::*;
 mod ui;
 use ui::*;
-mod player;
 mod constants;
 mod game_state;
+mod player;
 use game_state::*;
 mod replay;
 use replay::*;
 mod engine;
-
 
 fn main() {
     App::new()
@@ -41,10 +40,7 @@ fn main() {
         .add_systems(Update, replay)
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
-                resolution: WindowResolution::new(
-                    1600, 
-                    1600)
-                    .with_scale_factor_override(1.0),
+                resolution: WindowResolution::new(1600, 1600).with_scale_factor_override(1.0),
                 title: "Chess!".to_string(),
                 ..Default::default()
             }),
@@ -58,19 +54,15 @@ fn main() {
         .run();
 }
 
-
-pub fn setup(mut commands: Commands,) {
-    commands
-        .spawn((
-            Camera3d::default(),
-            Msaa::Sample4,
-            Transform::from_matrix(
-                Mat4::from_rotation_translation(
-                Quat::from_xyzw(-0.3, -0.5, -0.3, 0.5).normalize(), 
-                Vec3::new(-7.0, 20.0, 4.0)
-            )),
+pub fn setup(mut commands: Commands) {
+    commands.spawn((
+        Camera3d::default(),
+        Msaa::Sample4,
+        Transform::from_matrix(Mat4::from_rotation_translation(
+            Quat::from_xyzw(-0.3, -0.5, -0.3, 0.5).normalize(),
+            Vec3::new(-7.0, 20.0, 4.0),
+        )),
     ));
-
 
     commands.spawn((
         DirectionalLight {
@@ -78,7 +70,6 @@ pub fn setup(mut commands: Commands,) {
             shadows_enabled: true,
             ..default()
         },
-        Transform::default().looking_to(
-            Vec3::new(-1.0, -1.0, -1.0), Vec3::Y),
+        Transform::default().looking_to(Vec3::new(-1.0, -1.0, -1.0), Vec3::Y),
     ));
 }

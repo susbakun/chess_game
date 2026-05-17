@@ -6,18 +6,16 @@ pub fn select_piece(
     squares_query: Query<&Square>,
     piece_query: Query<(Entity, &Piece)>,
 ) {
-    let square_entity = if let Some(entity) = 
-        selected_square.entity {
-            entity
+    let square_entity = if let Some(entity) = selected_square.entity {
+        entity
     } else {
-        return
+        return;
     };
 
-    let square = if let Ok(square) = 
-        squares_query.get(square_entity) {
-            square
+    let square = if let Ok(square) = squares_query.get(square_entity) {
+        square
     } else {
-        return
+        return;
     };
 
     if selected_piece.entity.is_none() {
@@ -28,14 +26,12 @@ pub fn select_piece(
             }
         }
     }
-    
 }
-
 
 pub fn reset_selected(
     mut message_reader: MessageReader<ResetSelectedEvent>,
     mut selected_square: ResMut<SelectedSquare>,
-    mut selected_piece: ResMut<SelectedPiece>
+    mut selected_piece: ResMut<SelectedPiece>,
 ) {
     for _message in message_reader.read() {
         selected_piece.entity = None;

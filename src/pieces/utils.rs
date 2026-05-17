@@ -1,10 +1,9 @@
 use super::*;
 
-
 pub fn color_of_square(pos: (i8, i8), pieces: &Vec<Piece>) -> Option<PieceColor> {
     for piece in pieces {
         if piece.x == pos.0 && piece.y == pos.1 {
-            return Some(piece.color)
+            return Some(piece.color);
         }
     }
 
@@ -17,9 +16,9 @@ pub fn is_path_empty(begin: (i8, i8), end: (i8, i8), pieces: &Vec<Piece>) -> boo
         for piece in pieces {
             if piece.x == begin.0
                 && ((piece.y > begin.1 && piece.y < end.1)
-                    ||  (piece.y > end.1 && piece.y  < begin.1))
+                    || (piece.y > end.1 && piece.y < begin.1))
             {
-                    return false
+                return false;
             }
         }
     }
@@ -28,9 +27,9 @@ pub fn is_path_empty(begin: (i8, i8), end: (i8, i8), pieces: &Vec<Piece>) -> boo
         for piece in pieces {
             if piece.y == begin.1
                 && ((piece.x > begin.0 && piece.x < end.0)
-                    ||  (piece.x > end.0 && piece.x  < begin.0))
+                    || (piece.x > end.0 && piece.x < begin.0))
             {
-                    return false
+                return false;
             }
         }
     }
@@ -52,7 +51,7 @@ pub fn is_path_empty(begin: (i8, i8), end: (i8, i8), pieces: &Vec<Piece>) -> boo
             };
 
             if color_of_square(pos, pieces).is_some() {
-                return false
+                return false;
             }
         }
     }
@@ -60,15 +59,16 @@ pub fn is_path_empty(begin: (i8, i8), end: (i8, i8), pieces: &Vec<Piece>) -> boo
     true
 }
 
-
 pub fn is_king_side_castling(pos: (i8, i8)) -> bool {
     // checking two positions that a king would
     // go to for king-side castling
 
-    [WHITE_KING_POS_QUEEN_SIDE_CASTLING, BLACK_KING_POS_KING_SIDE_CASTLING]
-        .contains(&pos)
+    [
+        WHITE_KING_POS_QUEEN_SIDE_CASTLING,
+        BLACK_KING_POS_KING_SIDE_CASTLING,
+    ]
+    .contains(&pos)
 }
-
 
 pub fn convert_to_fen(pieces: &Vec<Piece>, current_color: PieceColor) -> String {
     let mut fen = String::new();
@@ -87,8 +87,7 @@ pub fn convert_to_fen(pieces: &Vec<Piece>, current_color: PieceColor) -> String 
                         fen.push_str(&empty_count.to_string());
                         empty_count = 0;
                     }
-                    let fen_piece = 
-                        piece_to_fen_character(piece);
+                    let fen_piece = piece_to_fen_character(piece);
                     fen.push(fen_piece);
                 }
                 None => {
@@ -108,14 +107,13 @@ pub fn convert_to_fen(pieces: &Vec<Piece>, current_color: PieceColor) -> String 
 
     let turn = match current_color {
         PieceColor::White => "w",
-        PieceColor::Black => "b"
+        PieceColor::Black => "b",
     };
 
     fen.push_str(&format!(" {turn} KQkq - 0 1"));
 
     fen
 }
-
 
 fn piece_to_fen_character(piece: &Piece) -> char {
     match (piece.piece_type, piece.color) {
@@ -143,21 +141,17 @@ pub fn fen_to_piece_pos(fen: String) -> Option<((i8, i8), (i8, i8))> {
     let start_file = chars.next().map(map_file_to_square_num)?;
     // we have to decrease it by one because the rank starts from 0
     // in our grame
-    let start_rank = (chars.next()?
-        .to_digit(10)? as i8) - 1;
+    let start_rank = (chars.next()?.to_digit(10)? as i8) - 1;
     let start_pos = (start_rank, start_file);
-
 
     let end_file = chars.next().map(map_file_to_square_num)?;
     // we have to decrease it by one because the rank starts from 0
     // in our grame
-    let end_rank = (chars.next()? 
-        .to_digit(10)? as i8) - 1;
+    let end_rank = (chars.next()?.to_digit(10)? as i8) - 1;
     let end_pos = (end_rank, end_file);
 
     Some((start_pos, end_pos))
 }
-
 
 fn map_file_to_square_num(file: char) -> i8 {
     match file {
@@ -169,6 +163,6 @@ fn map_file_to_square_num(file: char) -> i8 {
         'f' => 5,
         'g' => 6,
         'h' => 7,
-        _ => 0
+        _ => 0,
     }
 }

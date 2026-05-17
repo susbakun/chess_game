@@ -3,7 +3,7 @@ use super::*;
 #[derive(Component)]
 pub struct Square {
     pub x: i8,
-    pub y: i8
+    pub y: i8,
 }
 
 impl Square {
@@ -11,7 +11,6 @@ impl Square {
         (self.x + self.y + 1) % 2 == 0
     }
 }
-
 
 #[derive(Component)]
 pub struct Taken;

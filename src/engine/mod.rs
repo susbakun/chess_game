@@ -8,14 +8,14 @@ use stockfish::Stockfish;
 #[cfg(not(target_arch = "wasm32"))]
 pub struct StockfishEngine {
     engine: Mutex<Stockfish>,
-    best_move: Option<String>
+    best_move: Option<String>,
 }
 
 #[cfg(not(target_arch = "wasm32"))]
 impl StockfishEngine {
     pub fn new() -> Result<Self, String> {
-        let stockfish_path = Self::find_stockfish()
-            .ok_or("coulnd't find stockfish on your system")?;
+        let stockfish_path =
+            Self::find_stockfish().ok_or("coulnd't find stockfish on your system")?;
 
         let mut engine = Stockfish::new(stockfish_path)
             .map_err(|e| format!("failed to initilize stockfish: {e}"))?;
@@ -24,7 +24,7 @@ impl StockfishEngine {
 
         Ok(Self {
             engine: Mutex::new(engine),
-            best_move: None
+            best_move: None,
         })
     }
 
@@ -32,10 +32,10 @@ impl StockfishEngine {
         #[cfg(target_os = "windows")]
         {
             let paths = vec![
-            "C:\\Program Files\\stockfish\\stockfish.exe",
-            "C:\\Program Files (x86)\\stockfish\\stockfish.exe",
-            "stockfish.exe", // Check if in PATH
-        ];
+                "C:\\Program Files\\stockfish\\stockfish.exe",
+                "C:\\Program Files (x86)\\stockfish\\stockfish.exe",
+                "stockfish.exe", // Check if in PATH
+            ];
             for path in paths {
                 let pb = PathBuf::from(path);
                 if pb.exists() {
@@ -54,7 +54,7 @@ impl StockfishEngine {
             for path in paths {
                 let pb = PathBuf::from(path);
                 if pb.exists() {
-                    return Some(path)
+                    return Some(path);
                 }
             }
         }
@@ -109,12 +109,9 @@ impl StockfishEngine {
     }
 }
 
-
-
 #[cfg(not(target_arch = "wasm32"))]
 impl Default for StockfishEngine {
     fn default() -> Self {
-        StockfishEngine::new()
-            .expect("failed to create stockfishengine struct")
+        StockfishEngine::new().expect("failed to create stockfishengine struct")
     }
 }

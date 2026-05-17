@@ -17,30 +17,21 @@ pub fn replay(
 ) {
     if let Some(_) = replay_events.read().next() {
         *game_state = GameState::default();
-    
+
         for entity in pieces_query.iter() {
             commands.entity(entity).despawn();
         }
-        
+
         for entity in squares_query.iter() {
             commands.entity(entity).despawn();
         }
-        
+
         for entity in taken_pieces_query.iter() {
             commands.entity(entity).despawn();
         }
-        
-    
-        create_board(
-            commands.reborrow(), 
-            meshes, 
-            square_materials
-        );
-    
-        create_pieces(
-            commands,
-            materials, 
-            piece_handles
-        );
+
+        create_board(commands.reborrow(), meshes, square_materials);
+
+        create_pieces(commands, materials, piece_handles);
     }
 }

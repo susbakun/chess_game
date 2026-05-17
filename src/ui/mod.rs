@@ -1,13 +1,9 @@
 use bevy::prelude::*;
-use bevy::{
-    ecs::relationship::RelatedSpawnerCommands, 
-    input_focus::InputFocus
-};
+use bevy::{ecs::relationship::RelatedSpawnerCommands, input_focus::InputFocus};
 
-
-use crate::pieces::*;
 use crate::constants::*;
 use crate::game_state::*;
+use crate::pieces::*;
 use crate::replay::*;
 
 mod next_move_text;
@@ -20,5 +16,5 @@ mod plugins;
 pub use plugins::*;
 mod start_menu;
 pub use start_menu::*;
-mod  difficulty_menu;
+mod difficulty_menu;
 use difficulty_menu::*;

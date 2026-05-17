@@ -4,11 +4,10 @@ use crate::engine::*;
 use crate::pieces::*;
 use crate::player::*;
 
-
 #[derive(PartialEq)]
 pub enum GameType {
     PlayWithAi,
-    PlayOffline
+    PlayOffline,
 }
 
 #[derive(Resource)]
@@ -22,7 +21,7 @@ pub struct GameState {
     #[cfg(not(target_arch = "wasm32"))]
     pub engine: Option<StockfishEngine>,
     #[cfg(not(target_arch = "wasm32"))]
-    pub difficulty: Option<u32>
+    pub difficulty: Option<u32>,
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -35,7 +34,7 @@ impl Default for GameState {
             game_type: None,
             removed_counts: (0, 0),
             engine: None,
-            difficulty: None
+            difficulty: None,
         }
     }
 }
@@ -48,7 +47,7 @@ impl Default for GameState {
             winner: None,
             player: Player::default(),
             game_type: None,
-            removed_counts: (0, 0)
+            removed_counts: (0, 0),
         }
     }
 }
@@ -57,7 +56,7 @@ impl GameState {
     pub fn change_turn(&mut self) {
         self.player.0 = match self.player.0 {
             PieceColor::White => PieceColor::Black,
-            PieceColor::Black => PieceColor::White
+            PieceColor::Black => PieceColor::White,
         }
     }
 

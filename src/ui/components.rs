@@ -4,17 +4,14 @@ use super::*;
 #[derive(Component)]
 pub struct NextMoveText;
 
-
 // Create a marker component for the winner text
 #[derive(Component)]
 pub struct WinnerText;
-
 
 #[derive(Component)]
 pub struct GameOverScreen;
 #[derive(Component)]
 pub struct ReplayButton;
-
 
 #[derive(Component)]
 pub struct MenuScreen;
@@ -24,7 +21,6 @@ pub struct PlayWithAiButton;
 pub struct PlayOfflineButton;
 #[derive(Component)]
 pub struct ExitButton;
-
 
 #[derive(Component)]
 pub struct DifficultyMenuScreen;

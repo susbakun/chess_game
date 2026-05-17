@@ -17,11 +17,5 @@ pub fn render_taken_on_side(
 
     piece.taken = true;
 
-    
-    spawn_piece(
-        commands,
-        material, 
-        piece, 
-        piece_handles
-    );
+    spawn_piece(commands, material, piece, piece_handles);
 }

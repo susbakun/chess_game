@@ -1,33 +1,30 @@
 use bevy::prelude::*;
 
-use crate::pieces::*;
 use crate::game_state::*;
+use crate::pieces::*;
 
 mod components;
+mod event_handlers;
+mod messages;
 mod plugins;
 mod resources;
-mod messages;
-mod event_handlers;
-mod utils;
 mod select;
-
+mod utils;
 
 pub use components::*;
+pub use event_handlers::*;
+pub use messages::*;
 pub use plugins::*;
 pub use resources::*;
-pub use messages::*;
-pub use event_handlers::*;
-use utils::*;
 use select::*;
+use utils::*;
 
 pub fn create_board(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    materials: Res<SquareMaterials>
+    materials: Res<SquareMaterials>,
 ) {
-    let mesh = meshes.add(Plane3d::new(
-        Vec3::new(0.0, 1.0, 0.0), 
-        Vec2::new(0.5, 0.5)));
+    let mesh = meshes.add(Plane3d::new(Vec3::new(0.0, 1.0, 0.0), Vec2::new(0.5, 0.5)));
 
     for i in 0..8 {
         for j in 0..8 {
@@ -52,5 +49,3 @@ pub fn create_board(
         }
     }
 }
-
-
