@@ -1,0 +1,11 @@
+[package]
+name = "chess_game_server"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+spacetimedb = "2.0"
+log = "0.4"
