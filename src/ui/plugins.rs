@@ -12,13 +12,11 @@ impl Plugin for UIPlugin {
             )
             .add_systems(
                 Update,
-                (show_end_menu, hide_end_menu).run_if(resource_changed::<GameState>),
-            )
-            .add_systems(
-                Update,
                 (
                     start_menu_buttons_interactions_system,
-                    back_to_menu_button_system,
+                    play_online_button_system,
+                    play_offline_button_system,
+                    exit_button_system,
                 ),
             )
             .add_systems(Update, (show_start_menu, hide_start_menu))
@@ -26,9 +24,12 @@ impl Plugin for UIPlugin {
                 Update,
                 (
                     end_menu_buttons_interactions_system,
-                    play_offline_button_system,
-                    exit_button_system,
+                    back_to_menu_button_system,
                 ),
+            )
+            .add_systems(
+                Update,
+                (show_end_menu, hide_end_menu).run_if(resource_changed::<GameState>),
             );
 
         #[cfg(not(target_arch = "wasm32"))]

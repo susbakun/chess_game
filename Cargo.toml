@@ -1,3 +1,7 @@
+[workspace]
+members = ["server"]
+resolver = "2"
+
 [package]
 name = "chess_game"
 version = "0.1.0"
@@ -7,6 +11,7 @@ edition = "2024"
 bevy = {version = "0.18.1", features = ["bevy_dev_tools", "mesh_picking"]}
 stockfish = "0.2.11"
 wasm-bindgen = "0.2.121"
+spacetimedb-sdk = "2.1.0"
 
 
 [profile.release]

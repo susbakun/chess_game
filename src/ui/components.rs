@@ -16,6 +16,8 @@ pub struct ReplayButton;
 #[derive(Component)]
 pub struct MenuScreen;
 #[derive(Component)]
+pub struct PlayOnlineButton;
+#[derive(Component)]
 pub struct PlayWithAiButton;
 #[derive(Component)]
 pub struct PlayOfflineButton;

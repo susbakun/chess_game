@@ -9,6 +9,28 @@ pub fn create_start_menu_buttons(
 ) {
     let font = asset_server.load("fonts/FiraSans-Bold.ttf");
 
+    parent.spawn((
+        PlayOnlineButton,
+        Button,
+        Node {
+            width: Val::Px(300.0),
+            height: Val::Px(80.0),
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            border_radius: BorderRadius::all(Val::Px(5.0)),
+            ..default()
+        },
+        BackgroundColor(Color::linear_rgb(0.2, 0.5, 0.8)),
+        children![
+            Text::new("Play Online"),
+            TextFont {
+                font: font.clone(),
+                font_size: 40.0,
+                ..Default::default()
+            }
+        ],
+    ));
+
     #[cfg(not(target_arch = "wasm32"))]
     parent.spawn((
         PlayWithAiButton,
@@ -113,6 +135,18 @@ pub fn start_menu_buttons_interactions_system(
                 // component is marked as changed.
                 button.set_changed();
             }
+        }
+    }
+}
+
+pub fn play_online_button_system(
+    mut game_state: ResMut<GameState>,
+    interaction_query: Query<&Interaction, (Changed<Interaction>, With<PlayOnlineButton>)>,
+) {
+    for interaction in interaction_query {
+        if *interaction == Interaction::Pressed {
+            game_state.game_type = Some(GameType::PlayOnline);
+            game_state.is_loading = true;
         }
     }
 }

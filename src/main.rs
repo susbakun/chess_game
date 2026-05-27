@@ -17,6 +17,8 @@ use game_state::*;
 mod replay;
 use replay::*;
 mod engine;
+mod module_bindings;
+mod network;
 
 fn main() {
     App::new()
@@ -50,6 +52,7 @@ fn main() {
         .add_plugins(SquarePlugin)
         .add_plugins(PiecePlugin)
         .add_plugins(UIPlugin)
+        .add_plugins(network::NetworkPlugin)
         .add_message::<BackToMenuEvent>()
         .run();
 }
