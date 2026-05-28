@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use bevy::prelude::*;
-use spacetimedb_sdk::{DbContext, Table};
+use spacetimedb_sdk::DbContext;
 
 use super::SpacetimeConnection;
 use crate::game_state::GameState;
