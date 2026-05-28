@@ -6,10 +6,20 @@
 #![allow(unused, clippy::all)]
 use spacetimedb_sdk::__codegen::{self as __sdk, __lib, __sats, __ws};
 
+pub mod create_game_reducer;
+pub mod db_piece_type;
+pub mod game_table;
+pub mod game_type;
+pub mod join_game_reducer;
 pub mod player_table;
 pub mod player_type;
 pub mod register_player_reducer;
 
+pub use create_game_reducer::create_game;
+pub use db_piece_type::DbPiece;
+pub use game_table::*;
+pub use game_type::Game;
+pub use join_game_reducer::join_game;
 pub use player_table::*;
 pub use player_type::Player;
 pub use register_player_reducer::register_player;
@@ -22,6 +32,8 @@ pub use register_player_reducer::register_player;
 /// to indicate which reducer caused the event.
 
 pub enum Reducer {
+    CreateGame,
+    JoinGame { game_id: u64 },
     RegisterPlayer { username: String },
 }
 
@@ -32,6 +44,8 @@ impl __sdk::InModule for Reducer {
 impl __sdk::Reducer for Reducer {
     fn reducer_name(&self) -> &'static str {
         match self {
+            Reducer::CreateGame => "create_game",
+            Reducer::JoinGame { .. } => "join_game",
             Reducer::RegisterPlayer { .. } => "register_player",
             _ => unreachable!(),
         }
@@ -39,6 +53,12 @@ impl __sdk::Reducer for Reducer {
     #[allow(clippy::clone_on_copy)]
     fn args_bsatn(&self) -> Result<Vec<u8>, __sats::bsatn::EncodeError> {
         match self {
+            Reducer::CreateGame => __sats::bsatn::to_vec(&create_game_reducer::CreateGameArgs {}),
+            Reducer::JoinGame { game_id } => {
+                __sats::bsatn::to_vec(&join_game_reducer::JoinGameArgs {
+                    game_id: game_id.clone(),
+                })
+            }
             Reducer::RegisterPlayer { username } => {
                 __sats::bsatn::to_vec(&register_player_reducer::RegisterPlayerArgs {
                     username: username.clone(),
@@ -53,6 +73,7 @@ impl __sdk::Reducer for Reducer {
 #[allow(non_snake_case)]
 #[doc(hidden)]
 pub struct DbUpdate {
+    game: __sdk::TableUpdate<Game>,
     player: __sdk::TableUpdate<Player>,
 }
 
@@ -62,6 +83,9 @@ impl TryFrom<__ws::v2::TransactionUpdate> for DbUpdate {
         let mut db_update = DbUpdate::default();
         for table_update in __sdk::transaction_update_iter_table_updates(raw) {
             match &table_update.table_name[..] {
+                "game" => db_update
+                    .game
+                    .append(game_table::parse_table_update(table_update)?),
                 "player" => db_update
                     .player
                     .append(player_table::parse_table_update(table_update)?),
@@ -91,6 +115,9 @@ impl __sdk::DbUpdate for DbUpdate {
     ) -> AppliedDiff<'_> {
         let mut diff = AppliedDiff::default();
 
+        diff.game = cache
+            .apply_diff_to_table::<Game>("game", &self.game)
+            .with_updates_by_pk(|row| &row.id);
         diff.player = cache
             .apply_diff_to_table::<Player>("player", &self.player)
             .with_updates_by_pk(|row| &row.identity);
@@ -101,6 +128,9 @@ impl __sdk::DbUpdate for DbUpdate {
         let mut db_update = DbUpdate::default();
         for table_rows in raw.tables {
             match &table_rows.table[..] {
+                "game" => db_update
+                    .game
+                    .append(__sdk::parse_row_list_as_inserts(table_rows.rows)?),
                 "player" => db_update
                     .player
                     .append(__sdk::parse_row_list_as_inserts(table_rows.rows)?),
@@ -117,6 +147,9 @@ impl __sdk::DbUpdate for DbUpdate {
         let mut db_update = DbUpdate::default();
         for table_rows in raw.tables {
             match &table_rows.table[..] {
+                "game" => db_update
+                    .game
+                    .append(__sdk::parse_row_list_as_deletes(table_rows.rows)?),
                 "player" => db_update
                     .player
                     .append(__sdk::parse_row_list_as_deletes(table_rows.rows)?),
@@ -135,6 +168,7 @@ impl __sdk::DbUpdate for DbUpdate {
 #[allow(non_snake_case)]
 #[doc(hidden)]
 pub struct AppliedDiff<'r> {
+    game: __sdk::TableAppliedDiff<'r, Game>,
     player: __sdk::TableAppliedDiff<'r, Player>,
     __unused: std::marker::PhantomData<&'r ()>,
 }
@@ -149,6 +183,7 @@ impl<'r> __sdk::AppliedDiff<'r> for AppliedDiff<'r> {
         event: &EventContext,
         callbacks: &mut __sdk::DbCallbacks<RemoteModule>,
     ) {
+        callbacks.invoke_table_row_callbacks::<Game>("game", &self.game, event);
         callbacks.invoke_table_row_callbacks::<Player>("player", &self.player, event);
     }
 }
@@ -810,7 +845,8 @@ impl __sdk::SpacetimeModule for RemoteModule {
     type QueryBuilder = __sdk::QueryBuilder;
 
     fn register_tables(client_cache: &mut __sdk::ClientCache<Self>) {
+        game_table::register_table(client_cache);
         player_table::register_table(client_cache);
     }
-    const ALL_TABLE_NAMES: &'static [&'static str] = &["player"];
+    const ALL_TABLE_NAMES: &'static [&'static str] = &["game", "player"];
 }

@@ -6,6 +6,7 @@ use spacetimedb_sdk::DbContext;
 use super::SpacetimeConnection;
 use crate::game_state::GameState;
 use crate::module_bindings::DbConnection;
+use crate::module_bindings::game_table::{GameTableAccess, gameQueryTableAccess};
 use crate::module_bindings::player_table::{PlayerTableAccess, playerQueryTableAccess};
 
 const SPACETIMEDB_URI: &str = "http://127.0.0.1:3000";
@@ -46,7 +47,7 @@ pub fn connect_to_spacetimedb(mut commands: Commands, mut game_state: ResMut<Gam
             if let Err(e) = save_token(token) {
                 error!("Failed to save SpacetimeDB token: {e}");
             }
-            info!("Connected to SapcetimeDB");
+            info!("Connected to SpacetimeDB");
             ctx.subscription_builder()
                 .on_applied(|ctx| {
                     if let Some(identity) = ctx.try_identity() {
@@ -55,12 +56,13 @@ pub fn connect_to_spacetimedb(mut commands: Commands, mut game_state: ResMut<Gam
                             return;
                         }
                     }
-                    info!("Player subsciption applied");
+                    info!("Player subscription applied");
                 })
                 .on_error(|_ctx, err| {
                     error!("Subscription error: {err}");
                 })
                 .add_query(|q| q.from.player())
+                .add_query(|q| q.from.game())
                 .subscribe();
         })
         .on_connect_error(|_ctx, err| error!("SpacetimeDB connection error: {err}"))
