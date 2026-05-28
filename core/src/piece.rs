@@ -1,10 +1,28 @@
 use super::*;
-
 use crate::player::*;
+use utils::*;
+use constants::*;
 
 
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum PieceColor {
+    White,
+    Black,
+}
 
-#[derive(Component, Clone, Copy, Debug)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum PieceType {
+    King,
+    Queen,
+    Bishop,
+    Knight,
+    Rook,
+    Pawn,
+}
+
+
+#[derive(Clone, Copy, PartialEq, Debug)]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Component))]
 pub struct Piece {
     pub color: PieceColor,
     pub piece_type: PieceType,

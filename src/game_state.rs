@@ -1,8 +1,7 @@
 use bevy::prelude::*;
 
 use crate::engine::*;
-use crate::pieces::*;
-use crate::player::*;
+use chess_core::*;
 
 #[derive(PartialEq)]
 pub enum GameType {

@@ -12,7 +12,6 @@ mod ui;
 use ui::*;
 mod constants;
 mod game_state;
-mod player;
 use game_state::*;
 mod replay;
 use replay::*;

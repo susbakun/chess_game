@@ -4,3 +4,4 @@ out/
 *.wasm.d.ts
 .DS_Store
 node_modules/
+todo.md

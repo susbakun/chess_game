@@ -1,5 +1,5 @@
-use crate::pieces::*;
-use bevy::prelude::*;
+use crate::piece::*;
+use crate::utils::*;
 
 #[derive(Clone)]
 pub struct Player(pub PieceColor);

@@ -1,0 +1,13 @@
+[package]
+name = "chess_core"
+version = "0.1.0"
+edition = "2024"
+
+
+[lib]
+
+[dependencies]
+bevy = { version = "0.18.1", optional = true }
+
+[features]
+bevy = ["dep:bevy"]

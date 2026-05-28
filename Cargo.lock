@@ -1944,10 +1944,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 
 [[package]]
+name = "chess_core"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+]
+
+[[package]]
 name = "chess_game"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "chess_core",
  "spacetimedb-sdk",
  "stockfish",
  "wasm-bindgen",
@@ -1957,6 +1965,7 @@ dependencies = [
 name = "chess_game_server"
 version = "0.1.0"
 dependencies = [
+ "chess_core",
  "getrandom 0.2.17",
  "log",
  "petname",

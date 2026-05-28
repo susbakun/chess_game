@@ -1,7 +1,4 @@
-use crate::{
-    game_state::{GameState, GameType},
-    player::Player,
-};
+use crate::game_state::{GameState, GameType};
 
 use super::*;
 
@@ -14,6 +11,10 @@ pub fn process_move_system(
     mut piece_query: Query<(Entity, &mut Piece)>,
     mut reset_selected_event: MessageWriter<ResetSelectedEvent>,
 ) {
+    if game_state.is_multiplayer() {
+        return;
+    }
+
     let mut pieces_vec: Vec<Piece> = piece_query
         .iter()
         .map(|(_, piece)| *piece)
