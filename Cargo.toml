@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 bevy = {version = "0.18.1", features = ["bevy_dev_tools", "mesh_picking"]}
 stockfish = "0.2.11"
-wasm-bindgen = "0.2.121"
+wasm-bindgen = "0.2.122"
 
 
 [profile.release]
