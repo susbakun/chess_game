@@ -18,3 +18,5 @@ mod start_menu;
 pub use start_menu::*;
 mod difficulty_menu;
 use difficulty_menu::*;
+mod loading;
+pub use loading::*;

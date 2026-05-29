@@ -32,3 +32,6 @@ pub struct HardDiff;
 pub struct MediumDiff;
 #[derive(Component)]
 pub struct EasyDiff;
+
+#[derive(Component)]
+pub struct LoadingScreen;

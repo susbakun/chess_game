@@ -84,7 +84,7 @@ pub fn connect_to_spacetimedb(mut commands: Commands, mut game_state: ResMut<Gam
             error!("Failed to initiated SpacetimeDB connection: {e}")
         }
     }
-    game_state.is_loading = false;
+    // game_state.is_loading = false;
 }
 
 pub fn process_spacetimedb_messages(connection: Res<SpacetimeConnection>) {

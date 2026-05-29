@@ -6,6 +6,7 @@ impl Plugin for UIPlugin {
         app.add_systems(Startup, init_next_move_text)
             .add_systems(Startup, init_end_menu)
             .add_systems(Startup, init_start_menu)
+            .add_systems(Startup, init_loading_screen)
             .add_systems(
                 Update,
                 next_move_text_update.run_if(resource_changed::<GameState>),
@@ -30,6 +31,10 @@ impl Plugin for UIPlugin {
             .add_systems(
                 Update,
                 (show_end_menu, hide_end_menu).run_if(resource_changed::<GameState>),
+            )
+            .add_systems(
+                Update,
+                (show_loading_screen, hide_loading_screen).run_if(resource_changed::<GameState>),
             );
 
         #[cfg(not(target_arch = "wasm32"))]
