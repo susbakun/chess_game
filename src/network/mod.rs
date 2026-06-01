@@ -7,4 +7,6 @@ use connection::*;
 mod plugins;
 pub use plugins::*;
 mod resources;
-use resources::*;
+pub use resources::*;
+mod session;
+use session::*;

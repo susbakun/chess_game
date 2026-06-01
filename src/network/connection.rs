@@ -4,9 +4,8 @@ use bevy::prelude::*;
 use spacetimedb_sdk::DbContext;
 
 use super::SpacetimeConnection;
-use crate::game_state::GameState;
 use crate::module_bindings::DbConnection;
-use crate::module_bindings::game_table::{GameTableAccess, gameQueryTableAccess};
+use crate::module_bindings::game_table::gameQueryTableAccess;
 use crate::module_bindings::player_table::{PlayerTableAccess, playerQueryTableAccess};
 
 const SPACETIMEDB_URI: &str = "http://127.0.0.1:3000";
@@ -36,7 +35,7 @@ fn save_token(token: &str) -> std::io::Result<()> {
     std::fs::write(path, token)
 }
 
-pub fn connect_to_spacetimedb(mut commands: Commands, mut game_state: ResMut<GameState>) {
+pub fn connect_to_spacetimedb(mut commands: Commands) {
     let token = load_token();
 
     let conn = DbConnection::builder()
@@ -84,7 +83,6 @@ pub fn connect_to_spacetimedb(mut commands: Commands, mut game_state: ResMut<Gam
             error!("Failed to initiated SpacetimeDB connection: {e}")
         }
     }
-    // game_state.is_loading = false;
 }
 
 pub fn process_spacetimedb_messages(connection: Res<SpacetimeConnection>) {

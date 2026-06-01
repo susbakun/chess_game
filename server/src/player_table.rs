@@ -14,8 +14,7 @@ pub fn player_by_identity(ctx: &ReducerContext, identity: Identity) -> Option<Pl
 }
 
 pub fn require_player(ctx: &ReducerContext) -> Result<Player, String> {
-    player_by_identity(ctx, ctx.sender())
-        .ok_or_else(|| "Connect before playing online".to_string())
+    player_by_identity(ctx, ctx.sender()).ok_or_else(|| "Connect before playing online".to_string())
 }
 
 fn generate_username(ctx: &ReducerContext) -> String {
