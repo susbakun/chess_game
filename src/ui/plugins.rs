@@ -4,11 +4,16 @@ pub struct UIPlugin;
 impl Plugin for UIPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, init_next_move_text)
+            .add_systems(Startup, init_timers_text)
             .add_systems(Startup, init_end_menu)
             .add_systems(Startup, init_start_menu)
             .add_systems(
                 Update,
                 next_move_text_update.run_if(resource_changed::<GameState>),
+            )
+            .add_systems(
+                Update,
+                update_timers_text.run_if(resource_changed::<GameState>),
             )
             .add_systems(
                 Update,

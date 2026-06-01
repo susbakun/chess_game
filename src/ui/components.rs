@@ -30,3 +30,8 @@ pub struct HardDiff;
 pub struct MediumDiff;
 #[derive(Component)]
 pub struct EasyDiff;
+
+#[derive(Component)]
+pub struct WhiteTimerText;
+#[derive(Component)]
+pub struct BlackTimerText;

@@ -20,7 +20,6 @@ mod engine;
 
 fn main() {
     App::new()
-        .init_resource::<GameState>()
         .init_resource::<InputFocus>()
         .insert_resource(DebugPickingMode::Disabled)
         .add_systems(Startup, setup)
@@ -46,6 +45,7 @@ fn main() {
             }),
             ..Default::default()
         }))
+        .add_plugins(GamePlugin)
         .add_plugins((MeshPickingPlugin, DebugPickingPlugin))
         .add_plugins(SquarePlugin)
         .add_plugins(PiecePlugin)

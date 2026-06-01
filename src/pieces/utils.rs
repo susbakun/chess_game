@@ -166,3 +166,11 @@ fn map_file_to_square_num(file: char) -> i8 {
         _ => 0,
     }
 }
+
+// format it this way "mm:ss"
+pub fn format_time(seconds: u16) -> String {
+    let minutes = seconds / 60;
+    let secs = seconds % 60;
+
+    format!("{:02}:{:02}", minutes, secs)
+}

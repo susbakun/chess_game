@@ -64,7 +64,7 @@ cargo run --release
 - [x] Finish implementing all the rules: castling, check mates.
 - [x] Show the result on the UI (instead of console).
 - [x] Replay button when the game's over.
-- [ ] Play with timer
+- [x] Play with timer
 - [x] WASM
 
 ## Development

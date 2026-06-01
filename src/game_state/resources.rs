@@ -22,11 +22,14 @@ pub struct GameState {
     pub engine: Option<StockfishEngine>,
     #[cfg(not(target_arch = "wasm32"))]
     pub difficulty: Option<u32>,
+    pub timer: (u16, u16),
 }
 
 #[cfg(not(target_arch = "wasm32"))]
 impl Default for GameState {
     fn default() -> Self {
+        use crate::constants::TIMER_DURATION_SECS;
+
         Self {
             game_over: false,
             winner: None,
@@ -35,6 +38,8 @@ impl Default for GameState {
             removed_counts: (0, 0),
             engine: None,
             difficulty: None,
+            // 20 minutes each
+            timer: (TIMER_DURATION_SECS, TIMER_DURATION_SECS),
         }
     }
 }
@@ -48,6 +53,7 @@ impl Default for GameState {
             player: Player::default(),
             game_type: None,
             removed_counts: (0, 0),
+            timer: (20, 20),
         }
     }
 }

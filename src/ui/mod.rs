@@ -6,8 +6,8 @@ use crate::game_state::*;
 use crate::pieces::*;
 use crate::replay::*;
 
-mod next_move_text;
-use next_move_text::*;
+mod play_info;
+use play_info::*;
 mod components;
 use components::*;
 mod end_menu;
