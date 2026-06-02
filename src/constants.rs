@@ -28,8 +28,8 @@ pub const PRESSED_START_MENU_BUTTON: Color = Color::linear_rgb(0.15, 0.4, 0.7);
 
 // difficulty
 pub const HARD_DIFFICULTY_DEPTH: u32 = 10;
-pub const MEDIUM_DIFFICULTY_DEPTH: u32 = 8;
-pub const EASY_DIFFICULTY_DEPTH: u32 = 6;
+pub const MEDIUM_DIFFICULTY_DEPTH: u32 = 6;
+pub const EASY_DIFFICULTY_DEPTH: u32 = 3;
 
 // timer
 pub const TIMER_DURATION_SECS: u16 = 1200;
