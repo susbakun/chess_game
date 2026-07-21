@@ -53,7 +53,7 @@ impl Default for GameState {
             player: Player::default(),
             game_type: None,
             removed_counts: (0, 0),
-            timer: (20, 20),
+            timer: (TIMER_DURATION_SECS, TIMER_DURATION_SECS),
         }
     }
 }
