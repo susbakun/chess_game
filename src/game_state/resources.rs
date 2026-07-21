@@ -4,6 +4,8 @@ use crate::engine::*;
 use crate::pieces::*;
 use crate::player::*;
 
+use crate::constants::TIMER_DURATION_SECS;
+
 #[derive(PartialEq)]
 pub enum GameType {
     PlayWithAi,
@@ -28,8 +30,6 @@ pub struct GameState {
 #[cfg(not(target_arch = "wasm32"))]
 impl Default for GameState {
     fn default() -> Self {
-        use crate::constants::TIMER_DURATION_SECS;
-
         Self {
             game_over: false,
             winner: None,
