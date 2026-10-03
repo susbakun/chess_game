@@ -1,4 +1,7 @@
+use crate::pieces::{PieceComponent, PieceHandles};
+
 use super::*;
+use shared::*;
 
 pub fn on_square_hover(
     _over: On<Pointer<Over>>,
@@ -81,7 +84,7 @@ pub fn despawn_taken_pieces(
     materials: Res<SquareMaterials>,
     piece_handles: Res<PieceHandles>,
     mut game_state: ResMut<GameState>,
-    mut query: Query<(Entity, &mut Piece, &Taken)>,
+    mut query: Query<(Entity, &mut PieceComponent, &Taken)>,
 ) {
     for (entity, piece, _taken) in query.iter_mut() {
         commands.entity(entity).despawn();
@@ -96,7 +99,7 @@ pub fn despawn_taken_pieces(
 
         render_taken_on_side(
             commands.reborrow(),
-            *piece,
+            piece.0,
             material,
             game_state.removed_counts,
             piece_handles.clone(),

@@ -1,7 +1,4 @@
-use crate::{
-    game_state::{GameState, GameType},
-    player::Player,
-};
+use crate::game_state::{GameState, GameType};
 
 use super::*;
 
@@ -11,19 +8,21 @@ pub fn process_move_system(
     selected_piece: Res<SelectedPiece>,
     mut game_state: ResMut<GameState>,
     squares_query: Query<&Square>,
-    mut piece_query: Query<(Entity, &mut Piece)>,
+    mut piece_query: Query<(Entity, &mut PieceComponent)>,
     mut reset_selected_event: MessageWriter<ResetSelectedEvent>,
 ) {
     let mut pieces_vec: Vec<Piece> = piece_query
         .iter()
         .map(|(_, piece)| *piece)
         .filter(|piece| !piece.taken)
+        .map(|piece| piece.0)
         .collect();
 
     let pieces_entity_vec: Vec<(Entity, Piece)> = piece_query
         .iter()
         .map(|(entity, piece)| (entity, *piece))
         .filter(|(_, piece)| !piece.taken)
+        .map(|(entity, piece)| (entity, piece.0))
         .collect();
 
     if let Some(selected_piece) = selected_piece.entity {
@@ -98,7 +97,7 @@ fn move_piece(
     player: &Player,
     pieces_vec: &mut Vec<Piece>,
     pieces_entity_vec: &Vec<(Entity, Piece)>,
-    piece_query: &mut Query<(Entity, &mut Piece)>,
+    piece_query: &mut Query<(Entity, &mut PieceComponent)>,
     game_state: &mut GameState,
     reset_selected_event: &mut MessageWriter<ResetSelectedEvent>,
 ) {
@@ -178,7 +177,7 @@ fn move_piece(
     }
 }
 
-pub fn move_pieces(time: Res<Time>, mut query: Query<(&mut Transform, &Piece)>) {
+pub fn move_pieces(time: Res<Time>, mut query: Query<(&mut Transform, &PieceComponent)>) {
     for (mut transform, piece) in query.iter_mut() {
         let direction = vec3(piece.x as f32, 0.0, piece.y as f32) - transform.translation;
 

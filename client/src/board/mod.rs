@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
 use crate::game_state::*;
-use crate::pieces::*;
 
 mod components;
 mod event_handlers;
@@ -17,6 +16,7 @@ pub use messages::*;
 pub use plugins::*;
 pub use resources::*;
 use select::*;
+use shared::*;
 use utils::*;
 
 pub fn create_board(

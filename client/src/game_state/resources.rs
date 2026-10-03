@@ -1,10 +1,8 @@
 use bevy::prelude::*;
 
 use crate::engine::*;
-use crate::pieces::*;
-use crate::player::*;
 
-use crate::constants::TIMER_DURATION_SECS;
+use shared::*;
 
 #[derive(PartialEq)]
 pub enum GameType {

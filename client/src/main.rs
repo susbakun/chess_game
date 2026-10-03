@@ -7,15 +7,15 @@ use bevy::window::WindowResolution;
 mod board;
 use board::*;
 mod pieces;
-use pieces::*;
 mod ui;
 use ui::*;
-mod constants;
 mod game_state;
-mod player;
 use game_state::*;
 mod replay;
 use replay::*;
+
+use crate::pieces::PiecePlugin;
+mod constants;
 mod engine;
 
 fn main() {

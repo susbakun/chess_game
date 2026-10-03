@@ -5,33 +5,15 @@ mod move_logic;
 mod plugins;
 mod resources;
 mod spawn;
-mod utils;
+use shared::*;
 
 pub use components::*;
 pub use move_logic::*;
 pub use plugins::*;
 pub use resources::*;
 pub use spawn::*;
-pub use utils::*;
 
 use crate::board::*;
-use crate::constants::*;
-
-#[derive(Clone, Copy, PartialEq, Debug)]
-pub enum PieceColor {
-    White,
-    Black,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum PieceType {
-    King,
-    Queen,
-    Bishop,
-    Knight,
-    Rook,
-    Pawn,
-}
 
 pub fn create_pieces(
     mut commands: Commands,

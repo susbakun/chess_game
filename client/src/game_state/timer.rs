@@ -1,6 +1,5 @@
-use crate::pieces::PieceColor;
-
 use super::*;
+use shared::*;
 
 pub fn change_timer(time: Res<Time>, mut tick: Local<Timer>, mut game_state: ResMut<GameState>) {
     if game_state.game_type == Some(GameType::PlayWithAi) {

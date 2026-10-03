@@ -1,4 +1,5 @@
-use super::*;
+use crate::constants::*;
+use crate::piece::{Piece, PieceColor, PieceType};
 
 pub fn color_of_square(pos: (i8, i8), pieces: &Vec<Piece>) -> Option<PieceColor> {
     for piece in pieces {

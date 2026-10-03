@@ -1,3 +1,5 @@
+use crate::pieces::process_move_system;
+
 use super::*;
 
 pub struct SquarePlugin;

@@ -1,3 +1,5 @@
+use crate::pieces::{PieceHandles, spawn_piece};
+
 use super::*;
 
 pub fn render_taken_on_side(

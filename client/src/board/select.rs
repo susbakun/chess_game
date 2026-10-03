@@ -1,10 +1,12 @@
+use crate::pieces::PieceComponent;
+
 use super::*;
 
 pub fn select_piece(
     selected_square: Res<SelectedSquare>,
     mut selected_piece: ResMut<SelectedPiece>,
     squares_query: Query<&Square>,
-    piece_query: Query<(Entity, &Piece)>,
+    piece_query: Query<(Entity, &PieceComponent)>,
 ) {
     let square_entity = if let Some(entity) = selected_square.entity {
         entity

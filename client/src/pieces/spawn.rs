@@ -12,13 +12,13 @@ fn spawn_king(
     commands
         .spawn((
             Transform::from_translation(vec3(position.0 as f32, 0.0, position.1 as f32)),
-            Piece {
+            PieceComponent(Piece {
                 color: piece_color,
                 piece_type: PieceType::King,
                 x: position.0,
                 y: position.1,
                 taken,
-            },
+            }),
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -57,13 +57,13 @@ fn spawn_knight(
                 } else {
                     Quat::from_xyzw(0.0, 0.0, 0.0, 0.0)
                 }),
-            Piece {
+            PieceComponent(Piece {
                 color: piece_color,
                 piece_type: PieceType::Knight,
                 x: position.0,
                 y: position.1,
                 taken,
-            },
+            }),
             Pickable::IGNORE,
         ))
         .with_children(|parent| {
@@ -93,13 +93,13 @@ fn spawn_queen(
     commands
         .spawn((
             Transform::from_translation(vec3(position.0 as f32, 0.0, position.1 as f32)),
-            Piece {
+            PieceComponent(Piece {
                 color: piece_color,
                 piece_type: PieceType::Queen,
                 x: position.0,
                 y: position.1,
                 taken,
-            },
+            }),
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -122,13 +122,13 @@ fn spawn_bishop(
     commands
         .spawn((
             Transform::from_translation(vec3(position.0 as f32, 0.0, position.1 as f32)),
-            Piece {
+            PieceComponent(Piece {
                 color: piece_color,
                 piece_type: PieceType::Bishop,
                 x: position.0,
                 y: position.1,
                 taken,
-            },
+            }),
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -151,13 +151,13 @@ fn spawn_rook(
     commands
         .spawn((
             Transform::from_translation(vec3(position.0 as f32, 0.0, position.1 as f32)),
-            Piece {
+            PieceComponent(Piece {
                 color: piece_color,
                 piece_type: PieceType::Rook,
                 x: position.0,
                 y: position.1,
                 taken,
-            },
+            }),
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -180,13 +180,13 @@ fn spawn_pawn(
     commands
         .spawn((
             Transform::from_translation(vec3(position.0 as f32, 0.0, position.1 as f32)),
-            Piece {
+            PieceComponent(Piece {
                 color: piece_color,
                 piece_type: PieceType::Pawn,
                 x: position.0,
                 y: position.1,
                 taken,
-            },
+            }),
         ))
         .with_children(|parent| {
             parent.spawn((

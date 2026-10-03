@@ -1,7 +1,5 @@
 use super::*;
 
-use crate::constants::TIMER_DURATION_SECS;
-
 /// Initialize the text
 pub fn init_next_move_text(mut commands: Commands, asset_server: Res<AssetServer>) {
     let font = asset_server.load("fonts/FiraSans-Bold.ttf");
