@@ -17,7 +17,7 @@ pub use plugins::*;
 pub use resources::*;
 use select::*;
 use shared::*;
-use utils::*;
+pub use utils::*;
 
 pub fn create_board(
     mut commands: Commands,

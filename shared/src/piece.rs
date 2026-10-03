@@ -1,14 +1,17 @@
+use serde::{Deserialize, Serialize};
+
 use crate::constants::*;
 use crate::player::Player;
 use crate::utils::*;
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize, Default)]
 pub enum PieceColor {
+    #[default]
     White,
     Black,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum PieceType {
     King,
     Queen,
@@ -18,7 +21,7 @@ pub enum PieceType {
     Pawn,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Piece {
     pub color: PieceColor,
     pub piece_type: PieceType,

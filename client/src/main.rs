@@ -13,6 +13,8 @@ mod game_state;
 use game_state::*;
 mod replay;
 use replay::*;
+mod network;
+use network::*;
 
 use crate::pieces::PiecePlugin;
 mod constants;
@@ -50,6 +52,7 @@ fn main() {
         .add_plugins(SquarePlugin)
         .add_plugins(PiecePlugin)
         .add_plugins(UIPlugin)
+        .add_plugins(NetworkPlugin)
         .add_message::<BackToMenuEvent>()
         .run();
 }

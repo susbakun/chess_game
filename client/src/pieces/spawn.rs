@@ -201,7 +201,7 @@ fn spawn_pawn(
 pub fn spawn_piece(
     mut commands: Commands,
     material: Handle<StandardMaterial>,
-    piece: Piece,
+    piece: &Piece,
     piece_handles: PieceHandles,
 ) {
     let position = (piece.x, piece.y);

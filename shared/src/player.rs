@@ -1,9 +1,11 @@
+use serde::{Deserialize, Serialize};
+
 use crate::{
     piece::{Piece, PieceColor, PieceType},
     utils::is_path_empty,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Player(pub PieceColor);
 
 impl Player {

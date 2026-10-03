@@ -28,7 +28,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         white_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::White,
             piece_type: PieceType::Rook,
             x: 0,
@@ -41,7 +41,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         white_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::White,
             piece_type: PieceType::Knight,
             x: 0,
@@ -54,7 +54,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         white_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::White,
             piece_type: PieceType::Bishop,
             x: 0,
@@ -67,7 +67,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         white_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::White,
             piece_type: PieceType::Queen,
             x: 0,
@@ -80,7 +80,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         white_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::White,
             piece_type: PieceType::King,
             x: 0,
@@ -93,7 +93,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         white_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::White,
             piece_type: PieceType::Bishop,
             x: 0,
@@ -106,7 +106,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         white_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::White,
             piece_type: PieceType::Knight,
             x: 0,
@@ -119,7 +119,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         white_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::White,
             piece_type: PieceType::Rook,
             x: 0,
@@ -133,7 +133,7 @@ pub fn create_pieces(
         spawn_piece(
             commands.reborrow(),
             white_material.clone(),
-            Piece {
+            &Piece {
                 color: PieceColor::White,
                 piece_type: PieceType::Pawn,
                 x: 1,
@@ -148,7 +148,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         black_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::Black,
             piece_type: PieceType::Rook,
             x: 7,
@@ -161,7 +161,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         black_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::Black,
             piece_type: PieceType::Knight,
             x: 7,
@@ -174,7 +174,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         black_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::Black,
             piece_type: PieceType::Bishop,
             x: 7,
@@ -187,7 +187,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         black_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::Black,
             piece_type: PieceType::Queen,
             x: 7,
@@ -200,7 +200,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         black_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::Black,
             piece_type: PieceType::King,
             x: 7,
@@ -213,7 +213,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         black_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::Black,
             piece_type: PieceType::Bishop,
             x: 7,
@@ -226,7 +226,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         black_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::Black,
             piece_type: PieceType::Knight,
             x: 7,
@@ -239,7 +239,7 @@ pub fn create_pieces(
     spawn_piece(
         commands.reborrow(),
         black_material.clone(),
-        Piece {
+        &Piece {
             color: PieceColor::Black,
             piece_type: PieceType::Rook,
             x: 7,
@@ -253,7 +253,7 @@ pub fn create_pieces(
         spawn_piece(
             commands.reborrow(),
             black_material.clone(),
-            Piece {
+            &Piece {
                 color: PieceColor::Black,
                 piece_type: PieceType::Pawn,
                 x: 6,

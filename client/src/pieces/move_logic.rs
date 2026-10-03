@@ -1,6 +1,54 @@
+use renet::DefaultChannel;
+
 use crate::game_state::ClientGameState;
+use crate::network::{ClientNetwork, MyColor};
 
 use super::*;
+
+pub fn send_move_system(
+    selected_square: Res<SelectedSquare>,
+    selected_piece: Res<SelectedPiece>,
+    squares_query: Query<&Square>,
+    piece_query: Query<&PieceComponent>,
+    mut net: ResMut<ClientNetwork>,
+    mut reset_selected_event: MessageWriter<ResetSelectedEvent>,
+    my_color: Option<Res<MyColor>>,
+) {
+    let Some(selected_entity) = selected_piece.entity else {
+        return;
+    };
+    let Some(square_entity) = selected_square.entity else {
+        return;
+    };
+    let Ok(square) = squares_query.get(square_entity) else {
+        return;
+    };
+    let Ok(piece) = piece_query.get(selected_entity) else {
+        return;
+    };
+
+    let Some(my_color) = my_color else {
+        return;
+    }; // no color assigned yet, can't move
+    if piece.color != my_color.0 {
+        reset_selected_event.write(ResetSelectedEvent);
+        return;
+    }
+
+    let from = (piece.x, piece.y);
+    let to = (square.x, square.y);
+    if from == to {
+        return;
+    }
+
+    let event = GameEvent::MovePiece { from, to };
+    let message = ClientMessage::SendEvent(event);
+    let bytes = bincode::serialize(&message).expect("failed to serialize client message");
+    net.client
+        .send_message(DefaultChannel::ReliableOrdered, bytes);
+
+    reset_selected_event.write(ResetSelectedEvent);
+}
 
 pub fn process_move_system(
     mut commands: Commands,
@@ -123,10 +171,8 @@ fn move_piece(
             }
         }
 
-        // Recreate pieces_vec AFTER moving the piece
         let mut updated_pieces_vec: Vec<Piece> = p.simulate_next_step(new_pos, &pieces_vec);
 
-        // special move for castling rule
         let rook_entity_to_move = if p.castling_rule(new_pos, &player, &pieces_vec) {
             p.find_castle_in_castling_move(new_pos, &pieces_vec)
                 .and_then(|rook| {
@@ -146,10 +192,8 @@ fn move_piece(
         p.x = new_pos.0;
         p.y = new_pos.1;
 
-        // Drop the mutable borrow of piece
         let _ = p;
 
-        // Now mutate the rook
         if let Some((rook_entity, pos)) = rook_entity_to_move {
             if let Ok((_, mut moving_rook)) = piece_query.get_mut(rook_entity) {
                 moving_rook.x = pos.0;
@@ -157,14 +201,10 @@ fn move_piece(
             }
         }
 
-        // we store the current color before changing it
-        // so we would have access to the player who might
-        // have won the game
         let winner_player = player.0;
 
         game_state.change_turn();
 
-        // retrieve the next player
         let player = &game_state.player;
 
         if player.is_check_mate(&mut updated_pieces_vec) {
@@ -181,7 +221,6 @@ pub fn move_pieces(time: Res<Time>, mut query: Query<(&mut Transform, &PieceComp
     for (mut transform, piece) in query.iter_mut() {
         let direction = vec3(piece.x as f32, 0.0, piece.y as f32) - transform.translation;
 
-        // Only move if the piece isn't already there (distance is big)
         if direction.length() > 0.1 {
             transform.translation +=
                 direction.normalize() * time.delta_secs() * vec3(2.0, 2.0, 2.0);
