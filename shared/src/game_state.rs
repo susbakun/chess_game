@@ -171,7 +171,7 @@ impl Default for GameState {
             game_over: false,
             winner: None,
             player: Player::default(),
-            game_type: Some(GameType::Multiplayer),
+            game_type: None,
             // 20 minutes each
             timer: (TIMER_DURATION_SECS, TIMER_DURATION_SECS),
             waiting_for_opponent: true,

@@ -40,6 +40,7 @@ impl Plugin for UIPlugin {
         #[cfg(not(target_arch = "wasm32"))]
         {
             app.add_systems(Startup, init_difficulty_menu)
+                .add_systems(Update, paly_multiplayer_button_system)
                 .add_systems(Update, play_with_ai_button_system)
                 .add_systems(
                     Update,

@@ -11,6 +11,29 @@ pub fn create_start_menu_buttons(
 
     #[cfg(not(target_arch = "wasm32"))]
     parent.spawn((
+        PlayMultiplayerButton,
+        Button,
+        Node {
+            width: Val::Px(300.0),
+            height: Val::Px(80.0),
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            border_radius: BorderRadius::all(Val::Px(5.0)),
+            ..default()
+        },
+        BackgroundColor(Color::linear_rgb(0.2, 0.5, 0.8)),
+        children![
+            Text::new("Play multiplayer"),
+            TextFont {
+                font: font.clone(),
+                font_size: 40.0,
+                ..Default::default()
+            }
+        ],
+    ));
+
+    #[cfg(not(target_arch = "wasm32"))]
+    parent.spawn((
         PlayWithAiButton,
         Button,
         Node {
@@ -113,6 +136,18 @@ pub fn start_menu_buttons_interactions_system(
                 // component is marked as changed.
                 button.set_changed();
             }
+        }
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub fn paly_multiplayer_button_system(
+    mut game_state: ResMut<ClientGameState>,
+    interaction_query: Query<&Interaction, (Changed<Interaction>, With<PlayMultiplayerButton>)>,
+) {
+    for interaction in interaction_query {
+        if *interaction == Interaction::Pressed {
+            game_state.game_type = Some(GameType::Multiplayer);
         }
     }
 }
