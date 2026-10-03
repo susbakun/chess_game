@@ -1,5 +1,10 @@
 use super::*;
 
+#[derive(Component)]
+pub struct WaitingText;
+#[derive(Component)]
+pub struct WaitingScrren;
+
 // Component to mark the Text entity
 #[derive(Component)]
 pub struct NextMoveText;

@@ -7,6 +7,7 @@ impl Plugin for UIPlugin {
             .add_systems(Startup, init_timers_text)
             .add_systems(Startup, init_end_menu)
             .add_systems(Startup, init_start_menu)
+            .add_systems(Startup, init_waiting_screen)
             .add_systems(
                 Update,
                 next_move_text_update.run_if(resource_changed::<ClientGameState>),
@@ -49,7 +50,12 @@ impl Plugin for UIPlugin {
                         easy_difficulty_button_system,
                     ),
                 )
-                .add_systems(Update, (show_difficulty_menu, hide_difficulty_menu));
+                .add_systems(Update, (show_difficulty_menu, hide_difficulty_menu))
+                .add_systems(
+                    Update,
+                    (show_waiting_screen, hide_waiting_screen)
+                        .run_if(resource_changed::<ClientGameState>),
+                );
         }
     }
 }

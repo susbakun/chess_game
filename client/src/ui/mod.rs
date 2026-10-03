@@ -18,3 +18,5 @@ pub use start_menu::*;
 mod difficulty_menu;
 use difficulty_menu::*;
 use shared::*;
+mod waiting_screen;
+use waiting_screen::*;

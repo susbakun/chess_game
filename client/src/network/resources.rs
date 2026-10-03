@@ -101,7 +101,6 @@ pub fn receive_server_messages(
                 eprintln!("assigned color: {color:?}"); // needs Debug on PieceColor — add the derive if missing
                 commands.insert_resource(MyColor(color));
             }
-            _ => todo!(),
         }
     }
 }
