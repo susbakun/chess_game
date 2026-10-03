@@ -1,7 +1,11 @@
 use super::*;
 use shared::*;
 
-pub fn change_timer(time: Res<Time>, mut tick: Local<Timer>, mut game_state: ResMut<GameState>) {
+pub fn change_timer(
+    time: Res<Time>,
+    mut tick: Local<Timer>,
+    mut game_state: ResMut<ClientGameState>,
+) {
     if game_state.game_type == Some(GameType::PlayWithAi) {
         return;
     }

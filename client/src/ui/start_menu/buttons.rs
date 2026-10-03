@@ -119,7 +119,7 @@ pub fn start_menu_buttons_interactions_system(
 
 #[cfg(not(target_arch = "wasm32"))]
 pub fn play_with_ai_button_system(
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<ClientGameState>,
     interaction_query: Query<&Interaction, (Changed<Interaction>, With<PlayWithAiButton>)>,
 ) {
     for interaction in interaction_query {
@@ -133,7 +133,7 @@ pub fn play_with_ai_button_system(
 }
 
 pub fn play_offline_button_system(
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<ClientGameState>,
     interaction_query: Query<&Interaction, (Changed<Interaction>, With<PlayOfflineButton>)>,
 ) {
     for interaction in interaction_query {

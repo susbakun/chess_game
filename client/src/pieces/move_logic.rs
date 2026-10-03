@@ -1,4 +1,4 @@
-use crate::game_state::{GameState, GameType};
+use crate::game_state::ClientGameState;
 
 use super::*;
 
@@ -6,7 +6,7 @@ pub fn process_move_system(
     mut commands: Commands,
     selected_square: Res<SelectedSquare>,
     selected_piece: Res<SelectedPiece>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<ClientGameState>,
     squares_query: Query<&Square>,
     mut piece_query: Query<(Entity, &mut PieceComponent)>,
     mut reset_selected_event: MessageWriter<ResetSelectedEvent>,
@@ -98,7 +98,7 @@ fn move_piece(
     pieces_vec: &mut Vec<Piece>,
     pieces_entity_vec: &Vec<(Entity, Piece)>,
     piece_query: &mut Query<(Entity, &mut PieceComponent)>,
-    game_state: &mut GameState,
+    game_state: &mut ClientGameState,
     reset_selected_event: &mut MessageWriter<ResetSelectedEvent>,
 ) {
     let p: &mut Piece;

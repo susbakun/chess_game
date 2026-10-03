@@ -9,15 +9,15 @@ impl Plugin for UIPlugin {
             .add_systems(Startup, init_start_menu)
             .add_systems(
                 Update,
-                next_move_text_update.run_if(resource_changed::<GameState>),
+                next_move_text_update.run_if(resource_changed::<ClientGameState>),
             )
             .add_systems(
                 Update,
-                update_timers_text.run_if(resource_changed::<GameState>),
+                update_timers_text.run_if(resource_changed::<ClientGameState>),
             )
             .add_systems(
                 Update,
-                (show_end_menu, hide_end_menu).run_if(resource_changed::<GameState>),
+                (show_end_menu, hide_end_menu).run_if(resource_changed::<ClientGameState>),
             )
             .add_systems(
                 Update,

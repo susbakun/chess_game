@@ -6,7 +6,7 @@ pub struct BackToMenuEvent;
 
 pub fn replay(
     mut commands: Commands,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<ClientGameState>,
     materials: ResMut<Assets<StandardMaterial>>,
     piece_handles: Res<PieceHandles>,
     meshes: ResMut<Assets<Mesh>>,
@@ -17,7 +17,7 @@ pub fn replay(
     mut replay_events: MessageReader<BackToMenuEvent>,
 ) {
     if let Some(_) = replay_events.read().next() {
-        *game_state = GameState::default();
+        *game_state = ClientGameState::default();
 
         for entity in pieces_query.iter() {
             commands.entity(entity).despawn();

@@ -42,7 +42,7 @@ pub fn init_start_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 pub fn show_start_menu(
-    game_state: Res<GameState>,
+    game_state: Res<ClientGameState>,
     mut background_query: Query<(&mut Visibility, &MenuScreen)>,
 ) {
     if game_state.game_type.is_none() {
@@ -53,7 +53,7 @@ pub fn show_start_menu(
 }
 
 pub fn hide_start_menu(
-    game_state: Res<GameState>,
+    game_state: Res<ClientGameState>,
     mut background_query: Query<(&mut Visibility, &MenuScreen)>,
 ) {
     if let Some(_) = &game_state.game_type {

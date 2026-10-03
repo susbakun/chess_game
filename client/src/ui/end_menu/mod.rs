@@ -41,7 +41,7 @@ pub fn init_end_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 /// Update text with the correct turn
 pub fn show_end_menu(
-    game_state: Res<GameState>,
+    game_state: Res<ClientGameState>,
     mut text_query: Query<(&mut Text, &WinnerText)>,
     mut background_query: Query<(&mut BackgroundColor, &GameOverScreen, &mut Visibility)>,
 ) {
@@ -70,7 +70,7 @@ pub fn show_end_menu(
 }
 
 pub fn hide_end_menu(
-    game_state: Res<GameState>,
+    game_state: Res<ClientGameState>,
     mut background_query: Query<(&mut Visibility, &GameOverScreen)>,
 ) {
     let game_over = game_state.game_over;

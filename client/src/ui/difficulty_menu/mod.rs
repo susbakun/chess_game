@@ -45,7 +45,7 @@ pub fn init_difficulty_menu(mut commands: Commands, asset_server: Res<AssetServe
 
 #[cfg(not(target_arch = "wasm32"))]
 pub fn show_difficulty_menu(
-    game_state: Res<GameState>,
+    game_state: Res<ClientGameState>,
     mut background_query: Query<(&mut Visibility, &DifficultyMenuScreen)>,
 ) {
     if let Some(game_type) = &game_state.game_type {
@@ -59,7 +59,7 @@ pub fn show_difficulty_menu(
 
 #[cfg(not(target_arch = "wasm32"))]
 pub fn hide_difficulty_menu(
-    game_state: Res<GameState>,
+    game_state: Res<ClientGameState>,
     mut background_query: Query<(&mut Visibility, &DifficultyMenuScreen)>,
 ) {
     if let Some(game_type) = &game_state.game_type {

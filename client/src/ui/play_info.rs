@@ -77,7 +77,7 @@ pub fn init_timers_text(mut commands: Commands, asset_server: Res<AssetServer>) 
 }
 
 pub fn update_timers_text(
-    game_state: Res<GameState>,
+    game_state: Res<ClientGameState>,
     mut white_query: Query<
         (&mut Text, &mut Visibility),
         (With<WhiteTimerText>, Without<BlackTimerText>),
@@ -110,7 +110,7 @@ pub fn update_timers_text(
 
 /// Update text with the correct turn
 pub fn next_move_text_update(
-    game_state: Res<GameState>,
+    game_state: Res<ClientGameState>,
     mut query: Query<(&mut Text, &NextMoveText)>,
 ) {
     for (mut text, _tag) in query.iter_mut() {
