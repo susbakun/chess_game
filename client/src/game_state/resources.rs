@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+#[cfg(not(target_arch = "wasm32"))]
 use crate::engine::*;
 
 #[derive(PartialEq, Clone)]

@@ -1,7 +1,9 @@
 use super::*;
 
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(Component)]
 pub struct WaitingText;
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(Component)]
 pub struct WaitingScrren;
 
@@ -20,8 +22,10 @@ pub struct ReplayButton;
 
 #[derive(Component)]
 pub struct MenuScreen;
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(Component)]
 pub struct PlayMultiplayerButton;
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(Component)]
 pub struct PlayWithAiButton;
 #[derive(Component)]
@@ -29,12 +33,16 @@ pub struct PlayOfflineButton;
 #[derive(Component)]
 pub struct ExitButton;
 
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(Component)]
 pub struct DifficultyMenuScreen;
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(Component)]
 pub struct HardDiff;
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(Component)]
 pub struct MediumDiff;
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(Component)]
 pub struct EasyDiff;
 

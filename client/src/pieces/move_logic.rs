@@ -1,12 +1,17 @@
+#[cfg(not(target_arch = "wasm32"))]
 use renet::DefaultChannel;
 
+use crate::game_state::ClientGameState;
 #[cfg(not(target_arch = "wasm32"))]
 use crate::game_state::GameType;
+#[cfg(not(target_arch = "wasm32"))]
 use crate::network::ClientNetwork;
-use crate::{game_state::ClientGameState, network::MyColor};
+#[cfg(not(target_arch = "wasm32"))]
+use crate::network::MyColor;
 
 use super::*;
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn send_move_system(
     selected_square: Res<SelectedSquare>,
     selected_piece: Res<SelectedPiece>,

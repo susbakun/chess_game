@@ -1,5 +1,6 @@
 use super::*;
 
+#[cfg(not(target_arch = "wasm32"))]
 /// initilizing the end screen
 pub fn init_waiting_screen(mut commands: Commands, asset_server: Res<AssetServer>) {
     let font = asset_server.load("fonts/FiraSans-Bold.ttf");
@@ -34,6 +35,7 @@ pub fn init_waiting_screen(mut commands: Commands, asset_server: Res<AssetServer
         });
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 /// Update text with the correct turn
 pub fn show_waiting_screen(
     game_state: Res<ClientGameState>,
@@ -54,6 +56,7 @@ pub fn show_waiting_screen(
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn hide_waiting_screen(
     game_state: Res<ClientGameState>,
     mut background_query: Query<(&mut Visibility, &WaitingScrren)>,

@@ -8,25 +8,29 @@ mod board;
 use board::*;
 mod pieces;
 mod ui;
+#[cfg(not(target_arch = "wasm32"))]
 use shared::PieceColor;
 use ui::*;
 mod game_state;
 use game_state::*;
 mod replay;
 use replay::*;
+#[cfg(not(target_arch = "wasm32"))]
 mod network;
+#[cfg(not(target_arch = "wasm32"))]
 use network::*;
 
 use crate::pieces::PiecePlugin;
 mod constants;
+#[cfg(not(target_arch = "wasm32"))]
 mod engine;
 
 #[derive(Component)]
 struct MainCamera;
 
 fn main() {
-    App::new()
-        .init_resource::<InputFocus>()
+    let mut app = App::new();
+    app.init_resource::<InputFocus>()
         .insert_resource(DebugPickingMode::Disabled)
         .add_systems(Startup, setup)
         .add_systems(
@@ -55,11 +59,16 @@ fn main() {
         .add_plugins((MeshPickingPlugin, DebugPickingPlugin))
         .add_plugins(SquarePlugin)
         .add_plugins(PiecePlugin)
-        .add_plugins(NetworkPlugin)
         .add_plugins(UIPlugin)
-        .add_systems(Update, update_camera_for_color)
-        .add_message::<BackToMenuEvent>()
-        .run();
+        .add_message::<BackToMenuEvent>();
+
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        app.add_plugins(NetworkPlugin)
+            .add_systems(Update, update_camera_for_color);
+    }
+
+    app.run();
 }
 
 pub fn setup(mut commands: Commands) {
@@ -83,6 +92,7 @@ pub fn setup(mut commands: Commands) {
     ));
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 fn update_camera_for_color(
     my_color: Option<Res<MyColor>>,
     mut camera_query: Query<&mut Transform, With<MainCamera>>,

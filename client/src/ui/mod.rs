@@ -15,8 +15,12 @@ mod plugins;
 pub use plugins::*;
 mod start_menu;
 pub use start_menu::*;
+#[cfg(not(target_arch = "wasm32"))]
 mod difficulty_menu;
+#[cfg(not(target_arch = "wasm32"))]
 use difficulty_menu::*;
 use shared::*;
+#[cfg(not(target_arch = "wasm32"))]
 mod waiting_screen;
+#[cfg(not(target_arch = "wasm32"))]
 use waiting_screen::*;

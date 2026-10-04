@@ -2,6 +2,7 @@
 use super::*;
 
 mod buttons;
+#[cfg(not(target_arch = "wasm32"))]
 pub use buttons::*;
 
 #[cfg(not(target_arch = "wasm32"))]
