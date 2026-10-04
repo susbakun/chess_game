@@ -39,11 +39,7 @@ pub fn show_waiting_screen(
     game_state: Res<ClientGameState>,
     mut background_query: Query<(&mut BackgroundColor, &WaitingScrren, &mut Visibility)>,
 ) {
-    if game_state
-        .game_type
-        .as_ref()
-        .is_some_and(|gt| *gt != GameType::Multiplayer)
-    {
+    if game_state.game_type != Some(GameType::Multiplayer) {
         return;
     }
 

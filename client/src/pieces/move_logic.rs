@@ -1,6 +1,8 @@
 use renet::DefaultChannel;
 
 use crate::game_state::ClientGameState;
+#[cfg(not(target_arch = "wasm32"))]
+use crate::game_state::GameType;
 use crate::network::{ClientNetwork, MyColor};
 
 use super::*;

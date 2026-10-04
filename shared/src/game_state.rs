@@ -4,20 +4,12 @@ use crate::game_event::GameEvent;
 use crate::{constants::*, Piece, PieceType};
 use crate::{PieceColor, Player};
 
-#[derive(PartialEq, Serialize, Deserialize, Clone)]
-pub enum GameType {
-    PlayWithAi,
-    PlayOffline,
-    Multiplayer,
-}
-
 #[derive(Serialize, Deserialize, Clone)]
 pub struct GameState {
     pub pieces: Vec<Piece>,
     pub game_over: bool,
     pub winner: Option<PieceColor>,
     pub player: Player,
-    pub game_type: Option<GameType>,
     pub timer: (u16, u16),
     pub waiting_for_opponent: bool,
 }
@@ -171,7 +163,6 @@ impl Default for GameState {
             game_over: false,
             winner: None,
             player: Player::default(),
-            game_type: None,
             // 20 minutes each
             timer: (TIMER_DURATION_SECS, TIMER_DURATION_SECS),
             waiting_for_opponent: true,
