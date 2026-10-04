@@ -55,8 +55,8 @@ fn main() {
         .add_plugins((MeshPickingPlugin, DebugPickingPlugin))
         .add_plugins(SquarePlugin)
         .add_plugins(PiecePlugin)
-        .add_plugins(UIPlugin)
         .add_plugins(NetworkPlugin)
+        .add_plugins(UIPlugin)
         .add_systems(Update, update_camera_for_color)
         .add_message::<BackToMenuEvent>()
         .run();

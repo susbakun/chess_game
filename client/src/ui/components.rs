@@ -39,6 +39,7 @@ pub struct MediumDiff;
 pub struct EasyDiff;
 
 #[derive(Component)]
-pub struct WhiteTimerText;
-#[derive(Component)]
-pub struct BlackTimerText;
+pub enum TimerPosition {
+    Top,
+    Bottom,
+}

@@ -1,3 +1,5 @@
+use crate::network::MyColor;
+
 use super::*;
 
 /// Initialize the text
@@ -48,7 +50,7 @@ pub fn init_timers_text(mut commands: Commands, asset_server: Res<AssetServer>) 
                 },
                 TextColor(Color::linear_rgb(0.8, 0.8, 0.8)),
                 Visibility::Hidden,
-                WhiteTimerText,
+                TimerPosition::Bottom,
             ));
         });
 
@@ -71,35 +73,32 @@ pub fn init_timers_text(mut commands: Commands, asset_server: Res<AssetServer>) 
                 },
                 TextColor(Color::linear_rgb(0.8, 0.8, 0.8)),
                 Visibility::Hidden,
-                BlackTimerText,
+                TimerPosition::Top,
             ));
         });
 }
 
 pub fn update_timers_text(
     game_state: Res<ClientGameState>,
-    mut white_query: Query<
-        (&mut Text, &mut Visibility),
-        (With<WhiteTimerText>, Without<BlackTimerText>),
-    >,
-    mut black_query: Query<
-        (&mut Text, &mut Visibility),
-        (With<BlackTimerText>, Without<WhiteTimerText>),
-    >,
+    my_color: Option<Res<MyColor>>,
+    mut players_query: Query<(&mut Text, &mut Visibility, &TimerPosition)>,
 ) {
+    let my_color = my_color.map(|c| c.0).unwrap_or(PieceColor::White);
+
     let ai_mode = game_state.game_type == Some(GameType::PlayWithAi);
 
-    for (mut text, mut visibility) in white_query.iter_mut() {
-        text.0 = format_time(game_state.timer.0);
-        *visibility = if ai_mode {
-            Visibility::Hidden
-        } else {
-            Visibility::Visible
-        }
-    }
+    for (mut text, mut visibility, position) in players_query.iter_mut() {
+        let color_shown = match (position, my_color) {
+            (TimerPosition::Bottom, c) => c,
+            (TimerPosition::Top, PieceColor::White) => PieceColor::Black,
+            (TimerPosition::Top, PieceColor::Black) => PieceColor::White,
+        };
 
-    for (mut text, mut visibility) in black_query.iter_mut() {
-        text.0 = format_time(game_state.timer.1);
+        text.0 = format_time(match color_shown {
+            PieceColor::White => game_state.timer.0,
+            PieceColor::Black => game_state.timer.1,
+        });
+
         *visibility = if ai_mode {
             Visibility::Hidden
         } else {
