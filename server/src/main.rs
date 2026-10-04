@@ -3,7 +3,7 @@ use renet::{DefaultChannel, RenetServer, ServerEvent};
 use renet_netcode::{NetcodeServerTransport, ServerAuthentication, ServerConfig};
 use shared::network::{connection_config, ClientMessage, ServerMessage};
 use shared::ClientMessage::SendEvent;
-use shared::ServerMessage::AssignColor;
+use shared::ServerMessage::{AssignColor, SyncState, SyncTimer};
 use shared::{GameEvent, GameState, PieceColor};
 use std::collections::HashMap;
 use std::net::{SocketAddr, UdpSocket};
@@ -29,9 +29,25 @@ fn main() {
 
     let mut client_colors: HashMap<u64, PieceColor> = HashMap::new();
 
+    let mut timer_accumulator = Duration::ZERO;
+
     loop {
         server.update(dt);
         transport.update(dt, &mut server).unwrap();
+
+        timer_accumulator += dt;
+        if timer_accumulator >= Duration::from_secs(1) {
+            timer_accumulator -= Duration::from_secs(1);
+            let server_message = if game_state.tick_timer(1) {
+                SyncState(game_state.clone())
+            } else {
+                SyncTimer(game_state.timer.0, game_state.timer.1)
+            };
+
+            let serialized_message =
+                bincode::serialize(&server_message).expect("Expected server message");
+            server.broadcast_message(DefaultChannel::ReliableOrdered, serialized_message);
+        }
 
         while let Some(event) = server.get_event() {
             match event {
@@ -111,7 +127,6 @@ fn main() {
                             );
                         }
                     }
-                    _ => todo!(),
                 }
             }
         }

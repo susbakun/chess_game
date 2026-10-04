@@ -76,3 +76,11 @@ pub fn setup(mut commands: Commands) {
         Transform::default().looking_to(Vec3::new(-1.0, -1.0, -1.0), Vec3::Y),
     ));
 }
+
+fn is_multiplayer(game_state: Res<ClientGameState>) -> bool {
+    game_state.game_type == Some(GameType::Multiplayer)
+}
+
+fn not_multiplayer(game_state: Res<ClientGameState>) -> bool {
+    !is_multiplayer(game_state)
+}

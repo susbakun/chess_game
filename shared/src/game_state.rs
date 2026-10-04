@@ -171,6 +171,32 @@ impl Default for GameState {
 }
 
 impl GameState {
+    pub fn tick_timer(&mut self, elapsed_secs_whole: u16) -> bool {
+        // returns true if the tick caused a game-over, so the caller knows to broadcast
+        if self.game_over || self.waiting_for_opponent {
+            return false;
+        }
+        match self.player.0 {
+            PieceColor::White => {
+                if self.timer.0 == 0 {
+                    self.game_over = true;
+                    self.winner = Some(PieceColor::Black);
+                    return true;
+                }
+                self.timer.0 = self.timer.0.saturating_sub(elapsed_secs_whole);
+            }
+            PieceColor::Black => {
+                if self.timer.1 == 0 {
+                    self.game_over = true;
+                    self.winner = Some(PieceColor::White);
+                    return true;
+                }
+                self.timer.1 = self.timer.1.saturating_sub(elapsed_secs_whole);
+            }
+        }
+        false
+    }
+
     fn active_pieces(&self) -> Vec<Piece> {
         self.pieces.iter().filter(|p| !p.taken).copied().collect()
     }

@@ -1,5 +1,5 @@
-use crate::game_state::ClientGameState;
 use crate::pieces::{process_move_system, send_move_system};
+use crate::{is_multiplayer, not_multiplayer};
 
 use super::*;
 
@@ -30,12 +30,4 @@ impl Plugin for SquarePlugin {
             .add_systems(Update, despawn_taken_pieces)
             .add_systems(Update, reset_selected);
     }
-}
-
-fn is_multiplayer(game_state: Res<ClientGameState>) -> bool {
-    game_state.game_type == Some(GameType::Multiplayer)
-}
-
-fn not_multiplayer(game_state: Res<ClientGameState>) -> bool {
-    !is_multiplayer(game_state)
 }
